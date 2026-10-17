@@ -1,59 +1,27 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Search, FileCheck, Calendar, Download, ExternalLink, Filter } from "lucide-react"
+import { ArrowLeft, Search, FileCheck, Calendar, Download, ExternalLink, Filter, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import ParticleBackground from "@/components/particle-background"
+import { initialCertificates, type Certificate } from "@/lib/initial-data"
+import { AdminStore } from "@/lib/admin-store"
 
 export default function CertificatesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filter, setFilter] = useState("all")
+  const [certificates, setCertificates] = useState<Certificate[]>(initialCertificates)
+  const [lightboxCert, setLightboxCert] = useState<Certificate | null>(null)
 
-  const certificates = [
-    {
-      title: "2025 Python Crash Course For Absolute Beginners in Hindi",
-      issuer: "Udemy",
-      date: "January 10, 2025",
-      image: "/certificates/python-crash-course.jpg",
-      credentialId: "UC-9ecd1405-703d-4130-b3cf-6c02ae825861",
-      skills: ["Python", "Programming Fundamentals", "Hindi Language Learning", "Beginner Programming"],
-      category: "programming",
-      description:
-        "Comprehensive Python programming course designed for absolute beginners, taught in Hindi language for better understanding.",
-      instructor: "Vijay Patel",
-      duration: "3 total hours",
-    },
-    {
-      title: "JavaScript And PHP And Python Programming Complete Course",
-      issuer: "Udemy",
-      date: "November 11, 2024",
-      image: "/certificates/javascript-php-python.jpg",
-      credentialId: "UC-463c2f71-3e0f-496b-bf2b-dffc8b3304ba",
-      skills: ["JavaScript", "PHP", "Python", "Full Stack Development", "Web Programming"],
-      category: "development",
-      description:
-        "Complete programming course covering three major languages: JavaScript, PHP, and Python for full-stack web development.",
-      instructor: "PROPER DOT INSTITUTE",
-      duration: "8 total hours",
-    },
-    {
-      title: "Learn HTML and CSS from Beginning to Advanced",
-      issuer: "Udemy",
-      date: "January 10, 2025",
-      image: "/certificates/html-css-advanced.jpg",
-      credentialId: "UC-e1fb1d58-d987-4d43-8b0b-ff1253ff6a04",
-      skills: ["HTML", "CSS", "Web Design", "Frontend Development", "Responsive Design"],
-      category: "development",
-      description:
-        "Comprehensive course covering HTML and CSS from basic concepts to advanced techniques for modern web development.",
-      instructor: "Marcus Menti, Zechariah Tech",
-      duration: "5 total hours",
-    },
-  ]
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCertificates(AdminStore.getCertificates().filter((c) => c.status === "published" && c.visible))
+    }
+  }, [])
 
   const filteredCertificates = certificates.filter((cert) => {
     const matchesSearch =
@@ -67,7 +35,7 @@ export default function CertificatesPage() {
     { id: "all", name: "All Certificates" },
     { id: "development", name: "Web Development" },
     { id: "programming", name: "Programming" },
-    { id: "design", name: "Design" },
+    { id: "cloud", name: "Cloud & DevOps" },
   ]
 
   return (
@@ -128,16 +96,16 @@ export default function CertificatesPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredCertificates.map((certificate, index) => (
             <motion.div
-              key={index}
+              key={certificate.id || index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
             >
               <Card className="bg-white/5 backdrop-blur-md border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300 h-full flex flex-col">
                 <CardContent className="p-0 flex flex-col h-full">
-                  <div className="relative">
+                  <div className="relative cursor-pointer" onClick={() => setLightboxCert(certificate)}>
                     <img
-                      src={certificate.image || "/placeholder.svg"}
+                      src={certificate.file_url || "/placeholder.jpg"}
                       alt={certificate.title}
                       className="w-full h-48 object-cover"
                     />
@@ -163,15 +131,17 @@ export default function CertificatesPage() {
                   <div className="p-4 flex-grow">
                     <div className="flex items-center text-sm text-white/60 mb-3">
                       <Calendar className="w-4 h-4 mr-2" />
-                      <span>{certificate.date}</span>
+                      <span>{certificate.issue_date}</span>
                     </div>
 
-                    <div className="flex items-center text-sm text-white/60 mb-4">
+                    <div className="flex items-center text-sm text-white/60 mb-4 font-mono">
                       <FileCheck className="w-4 h-4 mr-2" />
-                      <span>Credential ID: {certificate.credentialId}</span>
+                      <span className="truncate">Credential ID: {certificate.credential_id}</span>
                     </div>
 
-                    <p className="text-white/70 text-sm mb-4">{certificate.description}</p>
+                    {certificate.description && (
+                      <p className="text-white/70 text-sm mb-4">{certificate.description}</p>
+                    )}
 
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium text-white/70">Skills Gained</h4>
@@ -186,14 +156,34 @@ export default function CertificatesPage() {
                   </div>
 
                   <div className="p-4 border-t border-white/10 flex justify-between">
-                    <button className="text-purple-400 hover:text-purple-300 transition-colors flex items-center text-sm font-medium">
+                    <button
+                      onClick={() => setLightboxCert(certificate)}
+                      className="text-purple-400 hover:text-purple-300 transition-colors flex items-center text-sm font-medium"
+                    >
                       View
                       <ExternalLink className="w-3 h-3 ml-1" />
                     </button>
-                    <button className="text-purple-400 hover:text-purple-300 transition-colors flex items-center text-sm font-medium">
-                      Download
-                      <Download className="w-3 h-3 ml-1" />
-                    </button>
+                    {certificate.credential_url ? (
+                      <a
+                        href={certificate.credential_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-400 hover:text-purple-300 transition-colors flex items-center text-sm font-medium"
+                      >
+                        Verify Credential
+                        <ExternalLink className="w-3 h-3 ml-1" />
+                      </a>
+                    ) : (
+                      <a
+                        href={certificate.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-400 hover:text-purple-300 transition-colors flex items-center text-sm font-medium"
+                      >
+                        Download
+                        <Download className="w-3 h-3 ml-1" />
+                      </a>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -216,6 +206,58 @@ export default function CertificatesPage() {
           </div>
         )}
       </div>
+
+      {/* Lightbox Modal */}
+      <AnimatePresence>
+        {lightboxCert && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={() => setLightboxCert(null)}
+          >
+            <div
+              className="relative max-w-4xl w-full bg-slate-900 border border-white/10 rounded-2xl overflow-hidden p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setLightboxCert(null)}
+                className="absolute top-4 right-4 text-white/60 hover:text-white p-2 rounded-full bg-white/10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="mb-4">
+                <h3 className="text-xl font-bold text-white">{lightboxCert.title}</h3>
+                <p className="text-sm text-purple-300">{lightboxCert.issuer} • {lightboxCert.issue_date}</p>
+              </div>
+
+              <div className="rounded-xl overflow-hidden max-h-[60vh] bg-black flex items-center justify-center mb-4">
+                <img
+                  src={lightboxCert.file_url || "/placeholder.jpg"}
+                  alt={lightboxCert.title}
+                  className="max-h-[60vh] w-auto object-contain"
+                />
+              </div>
+
+              <div className="flex justify-between items-center pt-2">
+                <span className="text-xs font-mono text-white/50">
+                  Credential ID: {lightboxCert.credential_id}
+                </span>
+
+                {lightboxCert.credential_url && (
+                  <a href={lightboxCert.credential_url} target="_blank" rel="noopener noreferrer">
+                    <Button size="sm" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs">
+                      Verify on {lightboxCert.issuer} <ExternalLink className="w-3.5 h-3.5 ml-1" />
+                    </Button>
+                  </a>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

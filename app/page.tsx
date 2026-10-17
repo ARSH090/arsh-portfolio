@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Github,
   Linkedin,
@@ -23,12 +25,37 @@ import {
   User,
   Send,
   Heart,
+  Briefcase,
+  Trophy,
+  CheckCircle2,
+  ExternalLink,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import ParticleBackground from "@/components/particle-background"
 import ProjectCard from "@/components/project-card"
 import CertificateSlider from "@/components/certificate-slider"
 import Link from "next/link"
+import {
+  initialSiteSettings,
+  initialProjects,
+  initialCertificates,
+  initialSkillCategories,
+  initialExperiences,
+  initialEducation,
+  initialAchievements,
+  initialTestimonials,
+  initialResumes,
+  type Project,
+  type Certificate,
+  type SiteSettings,
+  type Experience,
+  type Education,
+  type Achievement,
+  type Testimonial,
+  type Resume,
+} from "@/lib/initial-data"
+import { AdminStore } from "@/lib/admin-store"
+import { toast } from "sonner"
 
 export default function Portfolio() {
   const [isVisible, setIsVisible] = useState(false)
@@ -37,13 +64,56 @@ export default function Portfolio() {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
   const cursorRef = useRef<HTMLDivElement>(null)
 
+  // Dynamic CMS state
+  const [settings, setSettings] = useState<SiteSettings>(initialSiteSettings)
+  const [projects, setProjects] = useState<Project[]>(initialProjects)
+  const [certificates, setCertificates] = useState<Certificate[]>(initialCertificates)
+  const [experiences, setExperiences] = useState<Experience[]>(initialExperiences)
+  const [educationList, setEducationList] = useState<Education[]>(initialEducation)
+  const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements)
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials)
+  const [activeResume, setActiveResume] = useState<Resume>(initialResumes[0])
+  const [allSkills, setAllSkills] = useState<string[]>([
+    "HTML", "CSS", "JavaScript", "React", "Python", "Node.js", "Next.js", "Tailwind CSS", "Git", "MongoDB", "Express.js"
+  ])
+
+  // Contact form state
+  const [contactName, setContactName] = useState("")
+  const [contactEmail, setContactEmail] = useState("")
+  const [contactSubject, setContactSubject] = useState("")
+  const [contactMessage, setContactMessage] = useState("")
+  const [honeypot, setHoneypot] = useState("")
+  const [sending, setSending] = useState(false)
+
+  const loadData = () => {
+    if (typeof window !== "undefined") {
+      setSettings(AdminStore.getSettings())
+      const publicProjects = AdminStore.getProjects().filter((p) => p.status === "published")
+      setProjects(publicProjects)
+      const publicCerts = AdminStore.getCertificates().filter((c) => c.status === "published" && c.visible)
+      setCertificates(publicCerts)
+      setExperiences(AdminStore.getExperiences().filter((e) => e.status === "published"))
+      setEducationList(AdminStore.getEducation().filter((e) => e.content_status === "published"))
+      setAchievements(AdminStore.getAchievements().filter((a) => a.status === "published"))
+      setActiveResume(AdminStore.getActiveResume())
+
+      // Flatten unique skills from categories
+      const cats = AdminStore.getSkillCategories()
+      const flat = Array.from(new Set(cats.flatMap((c) => c.skills)))
+      if (flat.length > 0) setAllSkills(flat)
+    }
+  }
+
   useEffect(() => {
     setIsVisible(true)
+    loadData()
+
+    window.addEventListener("portfolio_data_updated", loadData)
 
     // Handle splash screen timing
     const timer = setTimeout(() => {
       setShowSplash(false)
-    }, 3500)
+    }, 2800)
 
     // Handle cursor effect
     const handleMouseMove = (e: MouseEvent) => {
@@ -52,7 +122,18 @@ export default function Portfolio() {
 
     // Handle scroll for active section
     const handleScroll = () => {
-      const sections = ["home", "about", "projects", "skills", "certificates", "feedback", "contact"]
+      const sections = [
+        "home",
+        "about",
+        "experience",
+        "projects",
+        "achievements",
+        "skills",
+        "certificates",
+        "education",
+        "feedback",
+        "contact",
+      ]
       const scrollPosition = window.scrollY + 100
 
       for (const section of sections) {
@@ -76,6 +157,7 @@ export default function Portfolio() {
       clearTimeout(timer)
       window.removeEventListener("scroll", handleScroll)
       window.removeEventListener("mousemove", handleMouseMove)
+      window.removeEventListener("portfolio_data_updated", loadData)
     }
   }, [])
 
@@ -93,95 +175,87 @@ export default function Portfolio() {
     }
   }
 
-  const skills = [
-    "HTML",
-    "CSS",
-    "JavaScript",
-    "React",
-    "Python",
-    "Node.js",
-    "Next.js",
-    "Tailwind CSS",
-    "Git",
-    "MongoDB",
-    "Express.js",
-  ]
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim()) {
+      toast.error("Please fill in all required fields.")
+      return
+    }
 
-  const projects = [
-    {
-      title: "TaskFlow AI",
-      description:
-        "An intelligent task management companion with AI planning, focus timer, and gamification features. Built with modern web technologies for optimal productivity.",
-      tech: ["React", "JavaScript", "CSS", "AI Integration"],
-      link: "https://v0-android-to-do-list-app-ten.vercel.app/",
-      github: "#",
-      image: "/projects/taskflow-ai.jpg",
-      features: [
-        "AI-powered task planning",
-        "Focus timer functionality",
-        "Gamification elements",
-        "Intelligent task management",
-      ],
-    },
-    {
-      title: "PDF Wizard",
-      description:
-        "A comprehensive PDF toolkit offering merge, split, compress, convert, protect, and OCR functionality. Fast, secure, and free to use for all your PDF needs.",
-      tech: ["JavaScript", "PDF.js", "Web APIs", "File Processing"],
-      link: "https://v0-web-nine-blue.vercel.app/",
-      github: "#",
-      image: "/projects/pdf-wizard.jpg",
-      features: ["PDF merging & splitting", "File compression", "Format conversion", "Password protection & OCR"],
-    },
-  ]
+    setSending(true)
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: contactName.trim(),
+          email: contactEmail.trim(),
+          subject: contactSubject.trim() || "Portfolio Inquiry",
+          body: contactMessage.trim(),
+          honeypot,
+        }),
+      })
 
-  const certificates = [
-    {
-      title: "2025 Python Crash Course For Absolute Beginners in Hindi",
-      issuer: "Udemy",
-      date: "January 10, 2025",
-      image: "/certificates/python-crash-course.jpg",
-      credentialId: "UC-9ecd1405-703d-4130-b3cf-6c02ae825861",
-      skills: ["Python", "Programming Fundamentals", "Hindi Language Learning", "Beginner Programming"],
-      instructor: "Vijay Patel",
-      duration: "3 total hours",
-    },
-    {
-      title: "JavaScript And PHP And Python Programming Complete Course",
-      issuer: "Udemy",
-      date: "November 11, 2024",
-      image: "/certificates/javascript-php-python.jpg",
-      credentialId: "UC-463c2f71-3e0f-496b-bf2b-dffc8b3304ba",
-      skills: ["JavaScript", "PHP", "Python", "Full Stack Development", "Web Programming"],
-      instructor: "PROPER DOT INSTITUTE",
-      duration: "8 total hours",
-    },
-    {
-      title: "Learn HTML and CSS from Beginning to Advanced",
-      issuer: "Udemy",
-      date: "January 10, 2025",
-      image: "/certificates/html-css-advanced.jpg",
-      credentialId: "UC-e1fb1d58-d987-4d43-8b0b-ff1253ff6a04",
-      skills: ["HTML", "CSS", "Web Design", "Frontend Development", "Responsive Design"],
-      instructor: "Marcus Menti, Zechariah Tech",
-      duration: "5 total hours",
-    },
-  ]
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to submit message.")
+      }
 
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Project Manager",
-      text: "Arsh delivered an exceptional website that exceeded our expectations. His attention to detail and problem-solving skills are impressive.",
-      avatar: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      name: "Michael Chen",
-      role: "Startup Founder",
-      text: "Working with Arsh was a pleasure. He understood our vision perfectly and translated it into a functional, beautiful product.",
-      avatar: "/placeholder.svg?height=80&width=80",
-    },
-  ]
+      // Also record in local store for instantaneous admin inbox review
+      AdminStore.addMessage({
+        name: contactName.trim(),
+        email: contactEmail.trim(),
+        subject: contactSubject.trim() || "Portfolio Inquiry",
+        body: contactMessage.trim(),
+      })
+
+      toast.success("Thank you! Your message has been sent successfully.")
+      setContactName("")
+      setContactEmail("")
+      setContactSubject("")
+      setContactMessage("")
+    } catch (err: any) {
+      // Offline fallback: save locally
+      AdminStore.addMessage({
+        name: contactName.trim(),
+        email: contactEmail.trim(),
+        subject: contactSubject.trim() || "Portfolio Inquiry",
+        body: contactMessage.trim(),
+      })
+      toast.success("Message received! Thank you for reaching out.")
+      setContactName("")
+      setContactEmail("")
+      setContactSubject("")
+      setContactMessage("")
+    } finally {
+      setSending(false)
+    }
+  }
+
+  // Map projects to ProjectCard format
+  const featuredProjects = projects.filter((p) => p.featured)
+  const displayProjects = featuredProjects.length > 0 ? featuredProjects : projects.slice(0, 4)
+
+  const mappedProjects = displayProjects.map((p) => ({
+    title: p.title,
+    description: p.summary || p.overview,
+    tech: p.tech_stack,
+    link: p.live_url || `/projects/${p.slug}`,
+    github: p.repo_url || "#",
+    image: p.cover_url || "/placeholder.jpg",
+    features: p.key_features.slice(0, 4),
+  }))
+
+  const mappedCertificates = certificates.map((c) => ({
+    title: c.title,
+    issuer: c.issuer,
+    date: c.issue_date,
+    image: c.file_url || "/placeholder.jpg",
+    credentialId: c.credential_id,
+    skills: c.skills,
+    instructor: c.instructor,
+    duration: c.duration,
+  }))
 
   return (
     <>
@@ -231,7 +305,7 @@ export default function Portfolio() {
                 transition={{ delay: 0.5, duration: 0.8 }}
                 className="text-6xl md:text-8xl font-bold mb-4 bg-gradient-to-r from-white via-purple-300 to-pink-300 bg-clip-text text-transparent"
               >
-                Md Arsh Eqbal
+                {settings.name}
               </motion.h1>
 
               <motion.div
@@ -278,23 +352,44 @@ export default function Portfolio() {
                 <div className="flex justify-between items-center py-4">
                   <motion.div
                     whileHover={{ scale: 1.05 }}
-                    className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+                    className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent cursor-pointer"
+                    onClick={() => scrollToSection("home")}
                   >
-                    Md Arsh Eqbal
+                    {settings.name}
                   </motion.div>
-                  <div className="hidden md:flex space-x-6 lg:space-x-8">
-                    {["home", "about", "projects", "skills", "certificates", "feedback", "contact"].map((item) => (
+                  <div className="hidden md:flex space-x-5 lg:space-x-7 items-center">
+                    {[
+                      { id: "home", label: "Home" },
+                      { id: "about", label: "About" },
+                      { id: "experience", label: "Experience" },
+                      { id: "projects", label: "Projects" },
+                      { id: "achievements", label: "Awards" },
+                      { id: "skills", label: "Skills" },
+                      { id: "certificates", label: "Certificates" },
+                      { id: "education", label: "Education" },
+                      { id: "contact", label: "Contact" },
+                    ].map((item) => (
                       <motion.button
-                        key={item}
-                        onClick={() => scrollToSection(item)}
-                        whileHover={{ scale: 1.1, color: "#c084fc" }}
-                        className={`capitalize transition-all duration-300 hover:text-purple-400 text-sm lg:text-base ${
-                          activeSection === item ? "text-purple-400" : "text-white/80"
+                        key={item.id}
+                        onClick={() => scrollToSection(item.id)}
+                        whileHover={{ scale: 1.08, color: "#c084fc" }}
+                        className={`capitalize transition-all duration-300 hover:text-purple-400 text-xs lg:text-sm ${
+                          activeSection === item.id ? "text-purple-400 font-semibold" : "text-white/80"
                         }`}
                       >
-                        {item}
+                        {item.label}
                       </motion.button>
                     ))}
+
+                    <Link href="/admin">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-purple-400/50 text-purple-300 hover:bg-purple-600/20 text-xs px-2.5 h-7 rounded-full"
+                      >
+                        Admin CMS
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -321,18 +416,19 @@ export default function Portfolio() {
                     transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
                     className="order-2 lg:order-1 text-left"
                   >
-                    <Badge className="bg-white/10 text-white hover:bg-white/20 mb-4" variant="outline">
-                      <span className="animate-pulse mr-1">✦</span> Welcome to my portfolio
-                    </Badge>
+                    {settings.show_availability && (
+                      <Badge className="bg-white/10 text-white hover:bg-white/20 mb-4" variant="outline">
+                        <span className="animate-pulse mr-1">✦</span> {settings.availability_text}
+                      </Badge>
+                    )}
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent leading-tight">
-                      Hello, I'm <br /> Md Arsh Eqbal
+                      Hello, I'm <br /> {settings.name}
                     </h1>
-                    <p className="text-lg md:text-xl lg:text-2xl text-purple-200 mb-6">
-                      Full Stack Web Developer & AI Enthusiast
+                    <p className="text-lg md:text-xl lg:text-2xl text-purple-200 mb-6 font-medium">
+                      {settings.headline}
                     </p>
-                    <p className="text-base md:text-lg text-white/80 mb-8 max-w-2xl">
-                      Passionate about building practical tools that solve real-world problems. Currently pursuing
-                      B.Tech at Netaji Subhas University, Jamshedpur.
+                    <p className="text-base md:text-lg text-white/80 mb-8 max-w-2xl leading-relaxed">
+                      {settings.tagline}
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -344,12 +440,9 @@ export default function Portfolio() {
                           View My Work
                         </Button>
                       </motion.div>
+
                       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <a
-                          href="https://drive.google.com/file/d/19ChCkUncuWgthhgDlrCW6f8isU_ChsLz/view?usp=drivesdk"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
+                        <Link href="/resume">
                           <Button
                             variant="outline"
                             className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white px-6 md:px-8 py-3 rounded-full transition-all duration-300 w-full sm:w-auto"
@@ -357,7 +450,7 @@ export default function Portfolio() {
                             <Download className="w-4 h-4 mr-2" />
                             Download CV
                           </Button>
-                        </a>
+                        </Link>
                       </motion.div>
                     </div>
 
@@ -382,7 +475,7 @@ export default function Portfolio() {
                       </motion.a>
                       <motion.a
                         whileHover={{ scale: 1.2, rotate: 5 }}
-                        href="https://github.com/Arsh12145"
+                        href="https://github.com/arsh090"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-white/60 hover:text-white transition-all duration-300"
@@ -391,7 +484,7 @@ export default function Portfolio() {
                       </motion.a>
                       <motion.a
                         whileHover={{ scale: 1.2, rotate: -5 }}
-                        href="https://www.linkedin.com/in/md-arsh-eqbal-569829345?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                        href="https://linkedin.com/in/md-arsh-eqbal"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-white/60 hover:text-blue-400 transition-all duration-300"
@@ -403,17 +496,17 @@ export default function Portfolio() {
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-white/70 text-sm">
                       <div className="flex items-center">
                         <User className="w-4 h-4 mr-1" />
-                        <span>B.Tech Student</span>
+                        <span>B.Tech CSE</span>
                       </div>
                       <div className="w-1 h-1 rounded-full bg-white/40 hidden sm:block"></div>
                       <div className="flex items-center">
                         <MapPin className="w-4 h-4 mr-1" />
-                        <span>Jamshedpur, India</span>
+                        <span>{settings.location}</span>
                       </div>
                       <div className="w-1 h-1 rounded-full bg-white/40 hidden sm:block"></div>
                       <div className="flex items-center">
                         <Calendar className="w-4 h-4 mr-1" />
-                        <span>4th Semester</span>
+                        <span>2023 - 2027</span>
                       </div>
                     </div>
                   </motion.div>
@@ -428,8 +521,8 @@ export default function Portfolio() {
                       <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 opacity-75 blur-xl animate-pulse"></div>
                       <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
                         <img
-                          src="/profile/arsh-profile.jpg"
-                          alt="Md Arsh Eqbal"
+                          src={settings.photo_url || "/profile/arsh-profile.jpg"}
+                          alt={settings.name}
                           className="w-full h-full object-cover object-center"
                         />
                       </div>
@@ -454,20 +547,20 @@ export default function Portfolio() {
                   </Card>
                   <Card className="bg-white/5 backdrop-blur-md border-white/10">
                     <CardContent className="p-3 md:p-4 text-center">
-                      <h3 className="text-2xl md:text-3xl font-bold text-pink-400">10+</h3>
+                      <h3 className="text-2xl md:text-3xl font-bold text-pink-400">{projects.length}+</h3>
                       <p className="text-white/70 text-sm md:text-base">Projects</p>
                     </CardContent>
                   </Card>
                   <Card className="bg-white/5 backdrop-blur-md border-white/10">
                     <CardContent className="p-3 md:p-4 text-center">
-                      <h3 className="text-2xl md:text-3xl font-bold text-purple-400">3+</h3>
+                      <h3 className="text-2xl md:text-3xl font-bold text-purple-400">{certificates.length}+</h3>
                       <p className="text-white/70 text-sm md:text-base">Certificates</p>
                     </CardContent>
                   </Card>
                   <Card className="bg-white/5 backdrop-blur-md border-white/10">
                     <CardContent className="p-3 md:p-4 text-center">
-                      <h3 className="text-2xl md:text-3xl font-bold text-pink-400">5+</h3>
-                      <p className="text-white/70 text-sm md:text-base">Happy Clients</p>
+                      <h3 className="text-2xl md:text-3xl font-bold text-pink-400">SIH</h3>
+                      <p className="text-white/70 text-sm md:text-base">1st Position</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -476,7 +569,8 @@ export default function Portfolio() {
               <motion.div
                 animate={{ y: [0, 10, 0] }}
                 transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}
-                className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+                className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer"
+                onClick={() => scrollToSection("about")}
               >
                 <ChevronDown className="w-6 h-6 text-white/60" />
               </motion.div>
@@ -506,11 +600,10 @@ export default function Portfolio() {
                       <CardContent className="p-6">
                         <div className="flex items-center mb-4">
                           <Code className="w-6 h-6 text-purple-400 mr-3" />
-                          <h3 className="text-xl font-semibold text-white">Developer</h3>
+                          <h3 className="text-xl font-semibold text-white">Full Stack Developer</h3>
                         </div>
-                        <p className="text-white/80">
-                          I'm a passionate Full Stack Web Developer with a growing interest in Artificial Intelligence.
-                          I love building practical tools that solve real-world problems.
+                        <p className="text-white/80 leading-relaxed">
+                          {settings.bio || "I'm a passionate Full Stack Web Developer with a strong background in AI systems, computer vision, and scalable microservices. I love engineering tools that solve real-world problems."}
                         </p>
                       </CardContent>
                     </Card>
@@ -526,11 +619,10 @@ export default function Portfolio() {
                       <CardContent className="p-6">
                         <div className="flex items-center mb-4">
                           <GraduationCap className="w-6 h-6 text-pink-400 mr-3" />
-                          <h3 className="text-xl font-semibold text-white">Student</h3>
+                          <h3 className="text-xl font-semibold text-white">B.Tech Student</h3>
                         </div>
-                        <p className="text-white/80">
-                          Currently pursuing my B.Tech (4th semester) at Netaji Subhas University, Jamshedpur. Always
-                          learning and exploring new technologies.
+                        <p className="text-white/80 leading-relaxed">
+                          Currently pursuing B.Tech in Computer Science Engineering at Netaji Subhas University (2023 - 2027). Consistently exploring novel developments in distributed cloud computing and generative AI architectures.
                         </p>
                       </CardContent>
                     </Card>
@@ -546,11 +638,10 @@ export default function Portfolio() {
                       <CardContent className="p-6">
                         <div className="flex items-center mb-4">
                           <Music className="w-6 h-6 text-yellow-400 mr-3" />
-                          <h3 className="text-xl font-semibold text-white">Creative</h3>
+                          <h3 className="text-xl font-semibold text-white">Creative & Problem Solver</h3>
                         </div>
-                        <p className="text-white/80">
-                          When I'm not coding, I enjoy singing and sharing creative ideas online. I believe creativity
-                          enhances problem-solving skills.
+                        <p className="text-white/80 leading-relaxed">
+                          When I'm not coding, I enjoy singing, writing creative ideas, and competing in hackathons. I believe creative disciplines directly elevate engineering intuition and user-experience design.
                         </p>
                       </CardContent>
                     </Card>
@@ -570,6 +661,67 @@ export default function Portfolio() {
                       Let's Work Together <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </motion.div>
+                </div>
+              </div>
+            </section>
+
+            {/* Experience Section */}
+            <section id="experience" className="py-20 px-4 bg-black/10">
+              <div className="max-w-6xl mx-auto">
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8 }}
+                  className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+                >
+                  Work & Internship Experience
+                </motion.h2>
+
+                <p className="text-center text-white/70 mb-16 max-w-2xl mx-auto text-sm sm:text-base">
+                  Real-world software engineering and cloud deployments following enterprise practices.
+                </p>
+
+                <div className="max-w-4xl mx-auto space-y-6">
+                  {experiences.map((exp, index) => (
+                    <motion.div
+                      key={exp.id || index}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.15, duration: 0.6 }}
+                    >
+                      <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300">
+                        <CardContent className="p-6 sm:p-8">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-xl font-bold text-white">{exp.role}</h3>
+                                <Badge className="bg-purple-600/20 text-purple-300 border-purple-500/30 text-xs">
+                                  {exp.type}
+                                </Badge>
+                              </div>
+                              <p className="text-purple-300 text-sm font-medium mt-1">{exp.company}</p>
+                            </div>
+
+                            <div className="flex items-center text-xs text-white/60">
+                              <Calendar className="w-3.5 h-3.5 mr-1.5 text-pink-400" />
+                              <span>{exp.start_date} - {exp.end_date}</span>
+                            </div>
+                          </div>
+
+                          <ul className="space-y-2 mt-4">
+                            {exp.bullets.map((bullet, i) => (
+                              <li key={i} className="flex items-start text-sm text-white/80">
+                                <CheckCircle2 className="w-4 h-4 text-green-400 mr-2 flex-shrink-0 mt-0.5" />
+                                <span>{bullet}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
             </section>
@@ -594,11 +746,11 @@ export default function Portfolio() {
                   transition={{ delay: 0.2, duration: 0.8 }}
                   className="text-center text-white/70 mb-16 max-w-2xl mx-auto"
                 >
-                  I've worked on various projects that solve real-world problems. Here are some of my notable ones.
+                  I've engineered enterprise cloud platforms, AI vision defect detectors, and mobile safety applications.
                 </motion.p>
 
                 <div className="space-y-16">
-                  {projects.map((project, index) => (
+                  {mappedProjects.map((project, index) => (
                     <ProjectCard key={index} project={project} index={index} />
                   ))}
                 </div>
@@ -610,18 +762,76 @@ export default function Portfolio() {
                   transition={{ delay: 0.6, duration: 0.8 }}
                   className="mt-16 text-center"
                 >
-                  <Button
-                    variant="outline"
-                    className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white px-8 py-3 rounded-full"
-                  >
-                    View All Projects <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
+                  <Link href="/projects">
+                    <Button
+                      variant="outline"
+                      className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white px-8 py-3 rounded-full"
+                    >
+                      View All Projects & Case Studies <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </Link>
                 </motion.div>
               </div>
             </section>
 
+            {/* Achievements Section */}
+            <section id="achievements" className="py-20 px-4">
+              <div className="max-w-6xl mx-auto">
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8 }}
+                  className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+                >
+                  Hackathons & Honors
+                </motion.h2>
+
+                <p className="text-center text-white/70 mb-16 max-w-2xl mx-auto text-sm sm:text-base">
+                  Competitive hackathon recognition and podium placements in nationwide technical competitions.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {achievements.map((ach, index) => (
+                    <motion.div
+                      key={ach.id || index}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.15, duration: 0.6 }}
+                      whileHover={{ y: -5 }}
+                    >
+                      <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300 h-full flex flex-col justify-between">
+                        <CardContent className="p-6 space-y-4">
+                          <div className="w-12 h-12 rounded-2xl bg-yellow-500/20 border border-yellow-500/30 flex items-center justify-center text-yellow-400">
+                            <Trophy className="w-6 h-6" />
+                          </div>
+
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30 text-xs">
+                                {ach.position}
+                              </Badge>
+                              <span className="text-xs text-white/50">{ach.year}</span>
+                            </div>
+                            <h3 className="text-lg font-bold text-white leading-snug">{ach.title}</h3>
+                            <p className="text-xs text-purple-300 font-medium mt-1">{ach.event}</p>
+                            <p className="text-xs text-white/50">{ach.organizer}</p>
+                          </div>
+
+                          <p className="text-xs text-white/75 leading-relaxed pt-2 border-t border-white/5">
+                            {ach.description}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
             {/* Skills Section */}
-            <section id="skills" className="py-20 px-4">
+            <section id="skills" className="py-20 px-4 bg-black/10">
               <div className="max-w-6xl mx-auto">
                 <motion.h2
                   initial={{ opacity: 0, y: 20 }}
@@ -640,22 +850,22 @@ export default function Portfolio() {
                   transition={{ delay: 0.2, duration: 0.8 }}
                   className="text-center text-white/70 mb-16 max-w-2xl mx-auto"
                 >
-                  I work with a variety of technologies and continuously expand my skill set.
+                  I work with enterprise full-stack frameworks, modern databases, cloud DevOps, and AI inference engines.
                 </motion.p>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {skills.map((skill, index) => (
+                  {allSkills.map((skill, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, scale: 0.8 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
-                      transition={{ delay: index * 0.05, duration: 0.5 }}
-                      whileHover={{ scale: 1.1, rotate: 2 }}
+                      transition={{ delay: index * 0.03, duration: 0.5 }}
+                      whileHover={{ scale: 1.05, rotate: 1 }}
                     >
                       <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-gradient-to-br hover:from-purple-600/20 hover:to-pink-600/20 transition-all duration-300 cursor-pointer">
                         <CardContent className="p-4 text-center">
-                          <p className="text-white font-medium">{skill}</p>
+                          <p className="text-white font-medium text-sm sm:text-base">{skill}</p>
                         </CardContent>
                       </Card>
                     </motion.div>
@@ -684,7 +894,7 @@ export default function Portfolio() {
                   transition={{ delay: 0.2, duration: 0.8 }}
                   className="text-center text-white/70 mb-16 max-w-2xl mx-auto"
                 >
-                  I'm constantly learning and improving my skills through various courses and certifications.
+                  I'm constantly learning and improving my skills through professional certifications and specialized programs.
                 </motion.p>
 
                 <motion.div
@@ -693,7 +903,7 @@ export default function Portfolio() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.4, duration: 0.8 }}
                 >
-                  <CertificateSlider certificates={certificates} />
+                  <CertificateSlider certificates={mappedCertificates} />
                 </motion.div>
 
                 <motion.div
@@ -712,64 +922,50 @@ export default function Portfolio() {
               </div>
             </section>
 
-            {/* Feedback Section */}
-            <section id="feedback" className="py-20 px-4">
-              <div className="max-w-4xl mx-auto text-center">
+            {/* Education Section */}
+            <section id="education" className="py-20 px-4">
+              <div className="max-w-6xl mx-auto">
                 <motion.h2
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8 }}
-                  className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+                  className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
                 >
-                  Share Your Feedback
+                  Education
                 </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-xl text-white/80 mb-12"
-                >
-                  Your thoughts and suggestions help me improve. I'd love to hear from you!
-                </motion.p>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.4, duration: 0.8 }}
-                  className="max-w-2xl mx-auto"
-                >
-                  <Card className="bg-gradient-to-br from-purple-600/10 to-pink-600/10 backdrop-blur-md border-white/10">
-                    <CardContent className="p-8">
-                      <div className="flex items-center justify-center mb-6">
-                        <Heart className="w-8 h-8 text-pink-400 mr-3" />
-                        <h3 className="text-2xl font-semibold text-white">Send Feedback</h3>
-                      </div>
-
-                      <p className="text-white/80 mb-6">
-                        Have suggestions, found a bug, or just want to say hello? Drop me a line!
-                      </p>
-
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-center space-x-2 text-white/70">
-                          <Mail className="w-5 h-5" />
-                          <span className="text-lg">Arshh12145@gmail.com</span>
-                        </div>
-
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                          <a href="mailto:Arshh12145@gmail.com?subject=Portfolio Feedback">
-                            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-full">
-                              <Send className="w-4 h-4 mr-2" />
-                              Send Feedback
-                            </Button>
-                          </a>
-                        </motion.div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                <div className="max-w-3xl mx-auto space-y-6">
+                  {educationList.map((edu, index) => (
+                    <motion.div
+                      key={edu.id || index}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.15, duration: 0.6 }}
+                    >
+                      <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300">
+                        <CardContent className="p-6 sm:p-8 flex items-start space-x-4">
+                          <div className="w-12 h-12 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 flex-shrink-0">
+                            <GraduationCap className="w-6 h-6" />
+                          </div>
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-xl font-bold text-white">{edu.degree} in {edu.field}</h3>
+                              <Badge className="bg-purple-600/20 text-purple-300 border-purple-500/30 text-xs">
+                                {edu.grade}
+                              </Badge>
+                            </div>
+                            <p className="text-purple-300 text-sm font-medium">{edu.institution}</p>
+                            <p className="text-xs text-white/60">
+                              {edu.start_year} - {edu.end_year} ({edu.status})
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </section>
 
@@ -786,15 +982,9 @@ export default function Portfolio() {
                   What People Say
                 </motion.h2>
 
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-center text-white/70 mb-16 max-w-2xl mx-auto"
-                >
+                <p className="text-center text-white/70 mb-16 max-w-2xl mx-auto">
                   Feedback from clients and collaborators I've worked with.
-                </motion.p>
+                </p>
 
                 <div className="grid md:grid-cols-2 gap-8">
                   {testimonials.map((testimonial, index) => (
@@ -808,7 +998,7 @@ export default function Portfolio() {
                       <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300">
                         <CardContent className="p-6">
                           <div className="flex items-center mb-4">
-                            <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
+                            <div className="w-12 h-12 rounded-full overflow-hidden mr-4 bg-slate-800">
                               <img
                                 src={testimonial.avatar || "/placeholder.svg"}
                                 alt={testimonial.name}
@@ -834,112 +1024,133 @@ export default function Portfolio() {
               </div>
             </section>
 
-            {/* Contact Section */}
+            {/* Interactive Contact Form Section */}
             <section id="contact" className="py-20 px-4 bg-black/20">
-              <div className="max-w-4xl mx-auto text-center">
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8 }}
-                  className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-                >
-                  Let's Connect
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-xl text-white/80 mb-12"
-                >
-                  Ready to build something impactful together? Let's connect and collaborate!
-                </motion.p>
-
-                <div className="grid md:grid-cols-2 gap-8 mb-12">
-                  <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <Card className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-md border-white/10 transition-all duration-300">
-                      <CardContent className="p-8">
-                        <Instagram className="w-12 h-12 text-pink-400 mx-auto mb-4" />
-                        <h3 className="text-xl font-semibold text-white mb-2">Instagram</h3>
-                        <p className="text-white/80 mb-4">Follow my creative journey</p>
-                        <a
-                          href="https://www.instagram.com/look_itz_arshu?igsh=Z3oxd205M2RtdDFw"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Button className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700">
-                            Follow Me
-                          </Button>
-                        </a>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <Card className="bg-gradient-to-br from-green-600/20 to-blue-600/20 backdrop-blur-md border-white/10 transition-all duration-300">
-                      <CardContent className="p-8">
-                        <MessageCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
-                        <h3 className="text-xl font-semibold text-white mb-2">WhatsApp</h3>
-                        <p className="text-white/80 mb-4">Let's chat about opportunities</p>
-                        <a href="https://wa.me/919608846764" target="_blank" rel="noopener noreferrer">
-                          <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
-                            Message Me
-                          </Button>
-                        </a>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                </div>
-
+              <div className="max-w-4xl mx-auto">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.4, duration: 0.8 }}
-                  className="flex justify-center space-x-6"
+                  transition={{ duration: 0.8 }}
+                  className="text-center mb-12"
                 >
-                  <motion.a
-                    whileHover={{ scale: 1.2, rotate: 5 }}
-                    href="mailto:Arshh12145@gmail.com"
-                    className="flex items-center text-white/60 hover:text-purple-400 transition-all duration-300"
-                  >
-                    <Mail className="w-5 h-5 mr-2" />
-                    Email
-                  </motion.a>
-                  <motion.a
-                    whileHover={{ scale: 1.2, rotate: -5 }}
-                    href="https://github.com/Arsh12145"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-white/60 hover:text-white transition-all duration-300"
-                  >
-                    <Github className="w-5 h-5 mr-2" />
-                    GitHub
-                  </motion.a>
-                  <motion.a
-                    whileHover={{ scale: 1.2, rotate: 5 }}
-                    href="https://www.linkedin.com/in/md-arsh-eqbal-569829345?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-white/60 hover:text-blue-400 transition-all duration-300"
-                  >
-                    <Linkedin className="w-5 h-5 mr-2" />
-                    LinkedIn
-                  </motion.a>
+                  <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    Let's Connect & Collaborate
+                  </h2>
+                  <p className="text-lg text-white/80 max-w-xl mx-auto">
+                    Ready to build something impactful together? Drop a message and let's get started.
+                  </p>
                 </motion.div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                  {/* Left Column: Direct Info */}
+                  <div className="space-y-4">
+                    <Card className="bg-white/5 backdrop-blur-md border-white/10 p-5">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <Mail className="w-5 h-5 text-purple-400" />
+                        <h4 className="font-semibold text-white text-sm">Direct Email</h4>
+                      </div>
+                      <a href={`mailto:${settings.email}`} className="text-xs text-purple-300 hover:underline">
+                        {settings.email}
+                      </a>
+                    </Card>
+
+                    <Card className="bg-white/5 backdrop-blur-md border-white/10 p-5">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <MessageCircle className="w-5 h-5 text-green-400" />
+                        <h4 className="font-semibold text-white text-sm">WhatsApp</h4>
+                      </div>
+                      <a href="https://wa.me/919608846764" target="_blank" rel="noopener noreferrer" className="text-xs text-green-300 hover:underline">
+                        +91 9608846764
+                      </a>
+                    </Card>
+
+                    <Card className="bg-white/5 backdrop-blur-md border-white/10 p-5">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <MapPin className="w-5 h-5 text-pink-400" />
+                        <h4 className="font-semibold text-white text-sm">Location</h4>
+                      </div>
+                      <p className="text-xs text-white/70">{settings.location}</p>
+                    </Card>
+                  </div>
+
+                  {/* Right 2 Columns: Validated Contact Form */}
+                  <div className="md:col-span-2">
+                    <Card className="bg-white/5 backdrop-blur-md border-white/10">
+                      <CardContent className="p-6 sm:p-8">
+                        <form onSubmit={handleContactSubmit} className="space-y-4">
+                          {/* Honeypot field (hidden from real users, traps bots) */}
+                          <div style={{ display: "none" }} aria-hidden="true">
+                            <input
+                              type="text"
+                              name="honeypot"
+                              tabIndex={-1}
+                              autoComplete="off"
+                              value={honeypot}
+                              onChange={(e) => setHoneypot(e.target.value)}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-medium text-white/80">Your Name *</label>
+                              <Input
+                                required
+                                value={contactName}
+                                onChange={(e) => setContactName(e.target.value)}
+                                placeholder="John Doe"
+                                className="bg-slate-900/60 border-white/10 text-white placeholder:text-white/30 text-sm"
+                              />
+                            </div>
+
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-medium text-white/80">Your Email *</label>
+                              <Input
+                                type="email"
+                                required
+                                value={contactEmail}
+                                onChange={(e) => setContactEmail(e.target.value)}
+                                placeholder="john@example.com"
+                                className="bg-slate-900/60 border-white/10 text-white placeholder:text-white/30 text-sm"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-medium text-white/80">Subject</label>
+                            <Input
+                              value={contactSubject}
+                              onChange={(e) => setContactSubject(e.target.value)}
+                              placeholder="Project Inquiry / Job Opportunity"
+                              className="bg-slate-900/60 border-white/10 text-white placeholder:text-white/30 text-sm"
+                            />
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-medium text-white/80">Message *</label>
+                            <Textarea
+                              rows={5}
+                              required
+                              value={contactMessage}
+                              onChange={(e) => setContactMessage(e.target.value)}
+                              placeholder="Tell me about your project, timeline, or open role..."
+                              className="bg-slate-900/60 border-white/10 text-white placeholder:text-white/30 text-sm"
+                            />
+                          </div>
+
+                          <Button
+                            type="submit"
+                            disabled={sending}
+                            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/20"
+                          >
+                            <Send className="w-4 h-4 mr-2" />
+                            {sending ? "Sending Message..." : "Send Message"}
+                          </Button>
+                        </form>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </div>
             </section>
 
@@ -970,7 +1181,7 @@ export default function Portfolio() {
             {/* Footer */}
             <footer className="py-8 px-4 border-t border-white/10">
               <div className="max-w-6xl mx-auto text-center">
-                <p className="text-white/60">© 2024 Md Arsh Eqbal. Built with Next.js and Tailwind CSS.</p>
+                <p className="text-white/60">{settings.footer_text}</p>
               </div>
             </footer>
           </motion.div>

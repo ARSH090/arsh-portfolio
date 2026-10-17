@@ -33,6 +33,13 @@ import {
   Share2,
   Twitter,
   Youtube,
+  Cpu,
+  Terminal,
+  Medal,
+  Award,
+  Zap,
+  Flame,
+  Rocket,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import ParticleBackground from "@/components/particle-background"
@@ -552,149 +559,337 @@ export default function Portfolio() {
               </motion.div>
             </section>
 
-            {/* About Section */}
-            <section id="about" className="py-20 px-4">
-              <div className="max-w-6xl mx-auto">
-                <motion.h2
+            {/* About Section - Square Box Glassmorphism Bento Grid */}
+            <section id="about" className="py-24 px-4 relative">
+              {/* Background ambient light */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="max-w-6xl mx-auto relative z-10">
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8 }}
-                  className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+                  className="text-center mb-16"
                 >
-                  About Me
-                </motion.h2>
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-purple-300 font-medium mb-4 backdrop-blur-md">
+                    <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
+                    <span>Background & Core Identity</span>
+                  </div>
+                  <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
+                    About Me
+                  </h2>
+                  <p className="text-white/70 max-w-2xl mx-auto mt-4 text-sm sm:text-base">
+                    Full-stack software engineer blending distributed systems architecture with AI vision pipelines and creative empathy.
+                  </p>
+                </motion.div>
 
-                <div className="max-w-4xl mx-auto space-y-6">
+                {/* Square Box Glassmorphic Bento Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {/* Card 1: Full Stack Engineer */}
                   <motion.div
-                    initial={{ opacity: 0, y: 50 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ delay: 0.1, duration: 0.6 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="group"
                   >
-                    <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300">
-                      <CardContent className="p-6">
-                        <div className="flex items-center mb-4">
-                          <Code className="w-6 h-6 text-purple-400 mr-3" />
-                          <h3 className="text-xl font-semibold text-white">Full Stack Developer</h3>
+                    <Card className="h-full bg-white/[0.03] backdrop-blur-xl border border-white/10 hover:border-purple-500/50 transition-all duration-500 rounded-3xl p-7 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 flex flex-col justify-between relative overflow-hidden">
+                      <div className="absolute -top-12 -right-12 w-32 h-32 bg-purple-500/15 rounded-full blur-2xl group-hover:bg-purple-500/30 transition-all duration-500" />
+                      <div>
+                        <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-lg">
+                          <Terminal className="w-6 h-6" />
                         </div>
-                        <p className="text-white/80 leading-relaxed">
-                          {settings.bio || "I'm a passionate Full Stack Web Developer with a strong background in AI systems, computer vision, and scalable microservices. I love engineering tools that solve real-world problems."}
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
+                          Full Stack Engineer
+                        </h3>
+                        <p className="text-sm text-white/75 leading-relaxed">
+                          {settings.bio || "Specialized in architecting high-concurrency cloud applications, RESTful microservices, and reactive user interfaces that scale seamlessly."}
                         </p>
-                      </CardContent>
+                      </div>
+
+                      <div className="pt-6 border-t border-white/5 flex flex-wrap gap-1.5 mt-6">
+                        {["Next.js 15", "React 19", "FastAPI", "TypeScript", "Tailwind"].map((t) => (
+                          <span key={t} className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-purple-500/10 border border-purple-500/20 text-purple-300">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
                     </Card>
                   </motion.div>
 
+                  {/* Card 2: Academic B.Tech Foundation */}
                   <motion.div
-                    initial={{ opacity: 0, y: 50 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.2, duration: 0.8 }}
+                    transition={{ delay: 0.2, duration: 0.6 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="group"
                   >
-                    <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300">
-                      <CardContent className="p-6">
-                        <div className="flex items-center mb-4">
-                          <GraduationCap className="w-6 h-6 text-pink-400 mr-3" />
-                          <h3 className="text-xl font-semibold text-white">B.Tech Student</h3>
+                    <Card className="h-full bg-white/[0.03] backdrop-blur-xl border border-white/10 hover:border-pink-500/50 transition-all duration-500 rounded-3xl p-7 shadow-xl hover:shadow-2xl hover:shadow-pink-500/20 flex flex-col justify-between relative overflow-hidden">
+                      <div className="absolute -top-12 -right-12 w-32 h-32 bg-pink-500/15 rounded-full blur-2xl group-hover:bg-pink-500/30 transition-all duration-500" />
+                      <div>
+                        <div className="w-12 h-12 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 mb-6 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300 shadow-lg">
+                          <GraduationCap className="w-6 h-6" />
                         </div>
-                        <p className="text-white/80 leading-relaxed">
-                          Currently pursuing B.Tech in Computer Science Engineering at Netaji Subhas University (2023 - 2027). Consistently exploring novel developments in distributed cloud computing and generative AI architectures.
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge className="bg-pink-500/20 text-pink-300 border-pink-500/30 text-[10px]">
+                            2023 - 2027
+                          </Badge>
+                          <span className="text-xs text-white/50">NSU Jamshedpur</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-pink-300 transition-colors">
+                          B.Tech in CSE
+                        </h3>
+                        <p className="text-sm text-white/75 leading-relaxed">
+                          Pursuing Computer Science Engineering with consistent focus on distributed computing, advanced algorithmic efficiency, database internals, and networking.
                         </p>
-                      </CardContent>
+                      </div>
+
+                      <div className="pt-6 border-t border-white/5 flex flex-wrap gap-1.5 mt-6">
+                        {["Distributed Systems", "Algorithms", "Cloud Computing", "OS Internals"].map((t) => (
+                          <span key={t} className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-pink-500/10 border border-pink-500/20 text-pink-300">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
                     </Card>
                   </motion.div>
 
+                  {/* Card 3: AI Vision & GenAI Core */}
                   <motion.div
-                    initial={{ opacity: 0, y: 50 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.4, duration: 0.8 }}
+                    transition={{ delay: 0.3, duration: 0.6 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="group"
                   >
-                    <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300">
-                      <CardContent className="p-6">
-                        <div className="flex items-center mb-4">
-                          <Music className="w-6 h-6 text-yellow-400 mr-3" />
-                          <h3 className="text-xl font-semibold text-white">Creative & Problem Solver</h3>
+                    <Card className="h-full bg-white/[0.03] backdrop-blur-xl border border-white/10 hover:border-cyan-500/50 transition-all duration-500 rounded-3xl p-7 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20 flex flex-col justify-between relative overflow-hidden">
+                      <div className="absolute -top-12 -right-12 w-32 h-32 bg-cyan-500/15 rounded-full blur-2xl group-hover:bg-cyan-500/30 transition-all duration-500" />
+                      <div>
+                        <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-lg">
+                          <Cpu className="w-6 h-6" />
                         </div>
-                        <p className="text-white/80 leading-relaxed">
-                          When I'm not coding, I enjoy singing, writing creative ideas, and competing in hackathons. I believe creative disciplines directly elevate engineering intuition and user-experience design.
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
+                          AI & Computer Vision
+                        </h3>
+                        <p className="text-sm text-white/75 leading-relaxed">
+                          Engineering intelligent pipelines with YOLOv8, multimodal LLM orchestrators, and automated vision defect detectors deployed for smart infrastructure.
                         </p>
-                      </CardContent>
+                      </div>
+
+                      <div className="pt-6 border-t border-white/5 flex flex-wrap gap-1.5 mt-6">
+                        {["YOLOv8", "PyTorch", "OpenCV", "OpenAI API", "HuggingFace"].map((t) => (
+                          <span key={t} className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-cyan-500/10 border border-cyan-500/20 text-cyan-300">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
                     </Card>
                   </motion.div>
 
+                  {/* Card 4: Hackathon Competitor & Problem Solver */}
                   <motion.div
-                    initial={{ opacity: 0, y: 50 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.6, duration: 0.8 }}
-                    className="text-center"
+                    transition={{ delay: 0.4, duration: 0.6 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="group"
                   >
-                    <Button
-                      onClick={() => scrollToSection("contact")}
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-full"
-                    >
-                      Let's Work Together <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
+                    <Card className="h-full bg-white/[0.03] backdrop-blur-xl border border-white/10 hover:border-amber-500/50 transition-all duration-500 rounded-3xl p-7 shadow-xl hover:shadow-2xl hover:shadow-amber-500/20 flex flex-col justify-between relative overflow-hidden">
+                      <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/15 rounded-full blur-2xl group-hover:bg-amber-500/30 transition-all duration-500" />
+                      <div>
+                        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-6 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300 shadow-lg">
+                          <Trophy className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">
+                          Hackathon Podium Finisher
+                        </h3>
+                        <p className="text-sm text-white/75 leading-relaxed">
+                          Proven ability to rapidly prototype, architect, and ship high-impact technical solutions under strict 36-hour sprint constraints against hundreds of engineering teams.
+                        </p>
+                      </div>
+
+                      <div className="pt-6 border-t border-white/5 flex flex-wrap gap-1.5 mt-6">
+                        {["SIH Finalist", "1st Place Winner", "Rapid Prototyping", "Team Lead"].map((t) => (
+                          <span key={t} className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-amber-500/10 border border-amber-500/20 text-amber-300">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </Card>
+                  </motion.div>
+
+                  {/* Card 5: Creative Dimensions & Intuition */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.5, duration: 0.6 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="group"
+                  >
+                    <Card className="h-full bg-white/[0.03] backdrop-blur-xl border border-white/10 hover:border-rose-500/50 transition-all duration-500 rounded-3xl p-7 shadow-xl hover:shadow-2xl hover:shadow-rose-500/20 flex flex-col justify-between relative overflow-hidden">
+                      <div className="absolute -top-12 -right-12 w-32 h-32 bg-rose-500/15 rounded-full blur-2xl group-hover:bg-rose-500/30 transition-all duration-500" />
+                      <div>
+                        <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-lg">
+                          <Music className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-rose-300 transition-colors">
+                          Creative Intuition & Singing
+                        </h3>
+                        <p className="text-sm text-white/75 leading-relaxed">
+                          Vocalist and creative writer. I believe artistic disciplines directly elevate engineering intuition, software craft, and empathetic UX design.
+                        </p>
+                      </div>
+
+                      <div className="pt-6 border-t border-white/5 flex flex-wrap gap-1.5 mt-6">
+                        {["Vocals & Music", "Creative Writing", "UX Psychology", "Visual Craft"].map((t) => (
+                          <span key={t} className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-rose-500/10 border border-rose-500/20 text-rose-300">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </Card>
+                  </motion.div>
+
+                  {/* Card 6: Collaborative CTA Box */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.6, duration: 0.6 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="group"
+                  >
+                    <Card className="h-full bg-gradient-to-br from-purple-900/30 via-slate-900/80 to-pink-900/30 backdrop-blur-xl border border-purple-500/30 hover:border-purple-400/70 transition-all duration-500 rounded-3xl p-7 shadow-xl hover:shadow-2xl hover:shadow-purple-500/30 flex flex-col justify-between relative overflow-hidden">
+                      <div className="absolute inset-0 bg-radial-gradient from-purple-500/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
+
+                      <div className="relative z-10">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white mb-6 shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform">
+                          <Rocket className="w-6 h-6" />
+                        </div>
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold mb-3">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                          <span>Ready for New Challenges</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2">
+                          Let's Build Together
+                        </h3>
+                        <p className="text-sm text-white/75 leading-relaxed">
+                          Open to software engineering internships, technical collaborations, and innovative AI product roles.
+                        </p>
+                      </div>
+
+                      <div className="relative z-10 pt-6 border-t border-white/10 mt-6 flex flex-col gap-3">
+                        <Button
+                          onClick={() => scrollToSection("contact")}
+                          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl shadow-lg shadow-purple-500/25 text-sm"
+                        >
+                          Initiate Conversation <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </div>
+                    </Card>
                   </motion.div>
                 </div>
               </div>
             </section>
 
-            {/* Experience Section */}
-            <section id="experience" className="py-20 px-4 bg-black/10">
-              <div className="max-w-6xl mx-auto">
-                <motion.h2
+            {/* Experience Section - Animated Timeline & Glassmorphic Cards */}
+            <section id="experience" className="py-24 px-4 bg-black/20 relative">
+              <div className="max-w-5xl mx-auto relative z-10">
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8 }}
-                  className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+                  className="text-center mb-16"
                 >
-                  Work & Internship Experience
-                </motion.h2>
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-pink-300 font-medium mb-4 backdrop-blur-md">
+                    <Briefcase className="w-3.5 h-3.5 text-pink-400" />
+                    <span>Career Track & Engineering Contributions</span>
+                  </div>
+                  <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
+                    Work & Internship Experience
+                  </h2>
+                  <p className="text-white/70 max-w-2xl mx-auto mt-4 text-sm sm:text-base">
+                    Real-world cloud infrastructure deployments, serverless pipelines, and enterprise software engineering.
+                  </p>
+                </motion.div>
 
-                <p className="text-center text-white/70 mb-16 max-w-2xl mx-auto text-sm sm:text-base">
-                  Real-world software engineering and cloud deployments following enterprise practices.
-                </p>
+                <div className="space-y-8 relative">
+                  {/* Subtle timeline connection line */}
+                  <div className="absolute left-4 sm:left-8 top-6 bottom-6 w-0.5 bg-gradient-to-b from-purple-500 via-pink-500 to-transparent hidden md:block" />
 
-                <div className="max-w-4xl mx-auto space-y-6">
                   {experiences.map((exp, index) => (
                     <motion.div
                       key={exp.id || index}
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0, x: -30 }}
+                      whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      transition={{ delay: index * 0.15, duration: 0.6 }}
+                      transition={{ delay: index * 0.2, duration: 0.7 }}
+                      whileHover={{ y: -6, scale: 1.01 }}
+                      className="group relative md:pl-16"
                     >
-                      <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300">
-                        <CardContent className="p-6 sm:p-8">
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                      {/* Timeline Dot Marker */}
+                      <div className="hidden md:flex absolute left-6 top-8 w-5 h-5 -translate-x-1/2 rounded-full bg-slate-900 border-2 border-purple-400 items-center justify-center shadow-lg shadow-purple-500/50 group-hover:scale-125 group-hover:border-pink-400 transition-all duration-300">
+                        <span className="w-2 h-2 rounded-full bg-pink-400" />
+                      </div>
+
+                      <Card className="relative overflow-hidden bg-white/[0.04] backdrop-blur-xl border border-white/10 group-hover:border-purple-500/50 transition-all duration-500 rounded-3xl p-6 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20">
+                        <div className="absolute -top-16 -right-16 w-44 h-44 bg-purple-600/10 rounded-full blur-3xl group-hover:bg-purple-600/20 transition-all" />
+
+                        <div className="relative z-10 space-y-6">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
                             <div>
-                              <div className="flex items-center gap-2">
-                                <h3 className="text-xl font-bold text-white">{exp.role}</h3>
-                                <Badge className="bg-purple-600/20 text-purple-300 border-purple-500/30 text-xs">
+                              <div className="flex flex-wrap items-center gap-2 mb-1">
+                                <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors">
+                                  {exp.role}
+                                </h3>
+                                <Badge className="bg-purple-600/20 text-purple-300 border-purple-500/30 text-xs px-2.5 py-0.5">
                                   {exp.type}
                                 </Badge>
                               </div>
-                              <p className="text-purple-300 text-sm font-medium mt-1">{exp.company}</p>
+                              <p className="text-purple-300 text-sm font-semibold tracking-wide">
+                                @ {exp.company}
+                              </p>
                             </div>
 
-                            <div className="flex items-center text-xs text-white/60">
-                              <Calendar className="w-3.5 h-3.5 mr-1.5 text-pink-400" />
+                            <div className="flex items-center text-xs sm:text-sm text-white/60 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-full self-start sm:self-auto backdrop-blur-md">
+                              <Calendar className="w-3.5 h-3.5 mr-2 text-pink-400" />
                               <span>{exp.start_date} - {exp.end_date}</span>
                             </div>
                           </div>
 
-                          <ul className="space-y-2 mt-4">
+                          {/* Bullet Points */}
+                          <ul className="space-y-3">
                             {exp.bullets.map((bullet, i) => (
-                              <li key={i} className="flex items-start text-sm text-white/80">
-                                <CheckCircle2 className="w-4 h-4 text-green-400 mr-2 flex-shrink-0 mt-0.5" />
+                              <li key={i} className="flex items-start text-sm sm:text-base text-white/80 leading-relaxed">
+                                <CheckCircle2 className="w-5 h-5 text-emerald-400 mr-3 flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                                 <span>{bullet}</span>
                               </li>
                             ))}
                           </ul>
-                        </CardContent>
+
+                          {/* Tech highlight footer */}
+                          <div className="pt-2 flex flex-wrap items-center gap-2">
+                            <span className="text-xs text-white/40 uppercase tracking-wider font-semibold mr-1">
+                              Stack:
+                            </span>
+                            {["AWS Infrastructure", "EC2 & S3", "Lambda Serverless", "Rekognition API", "DynamoDB"].map((tech) => (
+                              <span
+                                key={tech}
+                                className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-white/5 border border-white/10 text-white/70"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
                       </Card>
                     </motion.div>
                   ))}
@@ -703,29 +898,28 @@ export default function Portfolio() {
             </section>
 
             {/* Projects Section */}
-            <section id="projects" className="py-20 px-4 bg-black/20">
+            <section id="projects" className="py-24 px-4 bg-black/10 relative">
               <div className="max-w-6xl mx-auto">
-                <motion.h2
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8 }}
-                  className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+                  className="text-center mb-16"
                 >
-                  Featured Projects
-                </motion.h2>
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-cyan-300 font-medium mb-4 backdrop-blur-md">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Featured Engineering Portfolio</span>
+                  </div>
+                  <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
+                    Featured Projects
+                  </h2>
+                  <p className="text-white/70 max-w-2xl mx-auto mt-4 text-sm sm:text-base">
+                    Production systems, AI vision defect detectors, and scalable cloud platforms with clean architecture.
+                  </p>
+                </motion.div>
 
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-center text-white/70 mb-16 max-w-2xl mx-auto"
-                >
-                  I've engineered enterprise cloud platforms, AI vision defect detectors, and mobile safety applications.
-                </motion.p>
-
-                <div className="space-y-16">
+                <div className="space-y-12">
                   {mappedProjects.map((project, index) => (
                     <ProjectCard key={index} project={project} index={index} />
                   ))}
@@ -735,13 +929,13 @@ export default function Portfolio() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.6, duration: 0.8 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
                   className="mt-16 text-center"
                 >
                   <Link href="/projects">
                     <Button
                       variant="outline"
-                      className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white px-8 py-3 rounded-full"
+                      className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white px-8 py-3 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg shadow-purple-500/10 hover:shadow-purple-500/30"
                     >
                       View All Projects & Case Studies <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
@@ -750,58 +944,154 @@ export default function Portfolio() {
               </div>
             </section>
 
-            {/* Achievements Section */}
-            <section id="achievements" className="py-20 px-4">
-              <div className="max-w-6xl mx-auto">
-                <motion.h2
+            {/* Achievements Section - High-Energy Animated Hackathons Showcase */}
+            <section id="achievements" className="py-24 px-4 relative overflow-hidden">
+              {/* Background Glow */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="max-w-6xl mx-auto relative z-10">
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8 }}
-                  className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+                  className="text-center mb-16"
                 >
-                  Hackathons & Honors
-                </motion.h2>
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 font-semibold mb-4 backdrop-blur-md">
+                    <Trophy className="w-3.5 h-3.5 text-yellow-400" />
+                    <span>Competitive Podium Finishes</span>
+                  </div>
+                  <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-amber-300 via-yellow-400 to-pink-400 bg-clip-text text-transparent">
+                    Hackathons & Honors
+                  </h2>
+                  <p className="text-white/70 max-w-2xl mx-auto mt-4 text-sm sm:text-base">
+                    Recognized at nationwide and inter-college hackathons for engineering high-impact prototypes under rapid deadlines.
+                  </p>
+                </motion.div>
 
-                <p className="text-center text-white/70 mb-16 max-w-2xl mx-auto text-sm sm:text-base">
-                  Competitive hackathon recognition and podium placements in nationwide technical competitions.
-                </p>
+                {/* Animated Highlights Ribbon */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12 p-4 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-amber-500/20 shadow-xl"
+                >
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-yellow-400">
+                      <Trophy className="w-5 h-5 animate-bounce" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">1st Place Winner</h4>
+                      <p className="text-xs text-amber-300/80">State-Level Technical Conclave</p>
+                    </div>
+                  </div>
 
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                    <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-300">
+                      <Sparkles className="w-5 h-5 animate-pulse" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">SIH Finalist</h4>
+                      <p className="text-xs text-purple-300/80">Smart India Hackathon</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-pink-500/10 border border-pink-500/20">
+                    <div className="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400">
+                      <Flame className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">50+ Teams Competed</h4>
+                      <p className="text-xs text-pink-300/80">High-Pressure 36h Sprints</p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Animated Hackathon Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {achievements.map((ach, index) => (
-                    <motion.div
-                      key={ach.id || index}
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.15, duration: 0.6 }}
-                      whileHover={{ y: -5 }}
-                    >
-                      <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300 h-full flex flex-col justify-between">
-                        <CardContent className="p-6 space-y-4">
-                          <div className="w-12 h-12 rounded-2xl bg-yellow-500/20 border border-yellow-500/30 flex items-center justify-center text-yellow-400">
-                            <Trophy className="w-6 h-6" />
-                          </div>
+                  {achievements.map((ach, index) => {
+                    const isGold = index === 0
+                    return (
+                      <motion.div
+                        key={ach.id || index}
+                        initial={{ opacity: 0, y: 35, scale: 0.95 }}
+                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.15, duration: 0.6 }}
+                        whileHover={{ y: -10, scale: 1.03 }}
+                        className="group"
+                      >
+                        <Card className={`relative overflow-hidden bg-white/[0.04] backdrop-blur-xl border ${
+                          isGold ? "border-amber-500/40 hover:border-amber-400" : "border-white/10 hover:border-purple-500/50"
+                        } transition-all duration-500 rounded-3xl p-7 shadow-xl hover:shadow-2xl ${
+                          isGold ? "hover:shadow-amber-500/20" : "hover:shadow-purple-500/20"
+                        } h-full flex flex-col justify-between`}>
+                          {/* Animated Shimmering Top Accent */}
+                          <div className={`h-1.5 w-full bg-gradient-to-r ${
+                            isGold ? "from-yellow-400 via-amber-300 to-amber-500" : "from-purple-500 via-pink-500 to-indigo-500"
+                          } animate-pulse`} />
 
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30 text-xs">
-                                {ach.position}
-                              </Badge>
-                              <span className="text-xs text-white/50">{ach.year}</span>
+                          {/* Radial Glow */}
+                          <div className={`absolute -top-16 -right-16 w-36 h-36 ${
+                            isGold ? "bg-amber-500/20" : "bg-purple-500/15"
+                          } rounded-full blur-2xl group-hover:opacity-100 transition-opacity`} />
+
+                          <CardContent className="p-0 pt-6 space-y-5 relative z-10 flex-grow flex flex-col justify-between">
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                {/* Animated Bouncing Trophy Icon */}
+                                <motion.div
+                                  whileHover={{ rotate: [0, -15, 15, -8, 0], scale: 1.25 }}
+                                  transition={{ duration: 0.5 }}
+                                  className={`w-14 h-14 rounded-2xl ${
+                                    isGold
+                                      ? "bg-gradient-to-br from-amber-400/20 to-yellow-500/30 border border-amber-400/40 text-yellow-300 shadow-amber-500/30"
+                                      : "bg-purple-500/15 border border-purple-500/30 text-purple-300 shadow-purple-500/20"
+                                  } flex items-center justify-center shadow-lg cursor-pointer`}
+                                >
+                                  <Trophy className="w-7 h-7" />
+                                </motion.div>
+
+                                <Badge
+                                  className={`${
+                                    isGold
+                                      ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold"
+                                      : "bg-purple-600/30 text-purple-300 border-purple-500/40 font-semibold"
+                                  } text-xs px-3 py-1 shadow-md`}
+                                >
+                                  {ach.position}
+                                </Badge>
+                              </div>
+
+                              <div>
+                                <span className="text-xs text-white/50 font-mono tracking-wider">
+                                  {ach.year} • {ach.organizer}
+                                </span>
+                                <h3 className="text-xl font-bold text-white mt-1 group-hover:text-amber-300 transition-colors leading-snug">
+                                  {ach.title}
+                                </h3>
+                                <p className="text-xs text-purple-300 font-semibold mt-1">
+                                  {ach.event}
+                                </p>
+                              </div>
+
+                              <p className="text-xs sm:text-sm text-white/75 leading-relaxed pt-3 border-t border-white/5">
+                                {ach.description}
+                              </p>
                             </div>
-                            <h3 className="text-lg font-bold text-white leading-snug">{ach.title}</h3>
-                            <p className="text-xs text-purple-300 font-medium mt-1">{ach.event}</p>
-                            <p className="text-xs text-white/50">{ach.organizer}</p>
-                          </div>
 
-                          <p className="text-xs text-white/75 leading-relaxed pt-2 border-t border-white/5">
-                            {ach.description}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
+                            <div className="pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-white/50">
+                              <span>Verified Podium</span>
+                              <span className="text-amber-400 font-semibold flex items-center gap-1">
+                                <Award className="w-3.5 h-3.5" /> Awarded
+                              </span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    )
+                  })}
                 </div>
               </div>
             </section>

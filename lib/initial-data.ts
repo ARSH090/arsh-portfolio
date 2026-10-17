@@ -435,7 +435,7 @@ export const initialCertificates: Certificate[] = [
     issuer: "FosterAI Technologies",
     issue_date: "2024",
     credential_id: "AWS-FOSTERAI-2024",
-    file_url: "/placeholder.jpg",
+    file_url: "/certificates/fosterai-internship.jpg",
     file_type: "image",
     category: "cloud",
     visible: true,
@@ -467,10 +467,10 @@ export const initialProjects: Project[] = [
       "Documented containerized deployment using Docker and Kubernetes.",
     ],
     tech_stack: ["Next.js", "React", "TypeScript", "NestJS", "Python", "Prophet", "Docker", "Kubernetes"],
-    cover_url: "/projects/taskflow-ai.jpg",
+    cover_url: "/projects/amdox-erp.png",
     gallery: [
-      { url: "/projects/taskflow-ai.jpg", alt: "Amdox AI ERP Dashboard" },
-      { url: "/projects/pdf-wizard.jpg", alt: "Financial Ledger" }
+      { url: "/projects/amdox-erp.png", alt: "Amdox AI ERP Dashboard" },
+      { url: "/projects/amdox-erp.png", alt: "Financial Ledger" }
     ],
     award_badge: "Enterprise Production",
     featured: true,
@@ -519,9 +519,9 @@ export const initialProjects: Project[] = [
       "Workflows for complaint prioritization, escalation, and community-driven infrastructure planning.",
     ],
     tech_stack: ["TypeScript", "Node.js", "Firebase", "Firestore", "Gemini AI", "OpenStreetMap"],
-    cover_url: "/projects/taskflow-ai.jpg",
+    cover_url: "/projects/civicpulse.png",
     gallery: [
-      { url: "/projects/taskflow-ai.jpg", alt: "CivicPulse Hazard Map" }
+      { url: "/projects/civicpulse.png", alt: "CivicPulse Hazard Map" }
     ],
     featured: true,
     status: "published",
@@ -543,9 +543,9 @@ export const initialProjects: Project[] = [
       "JWT-secured backend with bcrypt password hashing; parent dashboard with child profiles, age-based controls, and activity logs.",
     ],
     tech_stack: ["React Native (Expo)", "Python", "FastAPI", "PyTorch", "Hugging Face", "MongoDB"],
-    cover_url: "/projects/pdf-wizard.jpg",
+    cover_url: "/projects/safebrowse.png",
     gallery: [
-      { url: "/projects/pdf-wizard.jpg", alt: "SafeBrowse Parent Dashboard" }
+      { url: "/projects/safebrowse.png", alt: "SafeBrowse Parent Dashboard" }
     ],
     award_badge: "Top 30 Ranchi Hacks (2500+ teams)",
     featured: true,
@@ -568,10 +568,10 @@ export const initialProjects: Project[] = [
       "Fully responsive on desktop and mobile.",
     ],
     tech_stack: ["Next.js", "React", "TypeScript", "Firebase"],
-    cover_url: "/projects/taskflow-ai.jpg",
+    cover_url: "/projects/empirialprops.png",
     live_url: "https://empirialprops.com",
     gallery: [
-      { url: "/projects/taskflow-ai.jpg", alt: "EmpirialProps Firm Compare" }
+      { url: "/projects/empirialprops.png", alt: "EmpirialProps Firm Compare" }
     ],
     featured: false,
     status: "published",
@@ -593,9 +593,9 @@ export const initialProjects: Project[] = [
       "Interactive cricket animations and responsive UI.",
     ],
     tech_stack: ["React", "FastAPI", "MongoDB", "TensorFlow", "Gemini AI"],
-    cover_url: "/projects/pdf-wizard.jpg",
+    cover_url: "/projects/apl-akinator.png",
     gallery: [
-      { url: "/projects/pdf-wizard.jpg", alt: "IPL Akinator Game Screen" }
+      { url: "/projects/apl-akinator.png", alt: "IPL Akinator Game Screen" }
     ],
     award_badge: "2nd Position GDG Ranchi",
     featured: false,
@@ -604,22 +604,22 @@ export const initialProjects: Project[] = [
   },
   {
     id: "00000000-0000-0000-0007-000000000007",
-    title: "HealthAI",
+    title: "HealthAI (MedConnect)",
     slug: "healthai",
-    summary: "Healthcare web app with AI-driven health insights and intelligent symptom evaluation.",
+    summary: "Healthcare web app with AI-driven health insights, doctor consultations, and intelligent appointment scheduling.",
     category: "Web",
-    overview: "HealthAI bridges clinical queries with intelligent symptom checking and medical appointment scheduling.",
+    overview: "MedConnect HealthAI bridges clinical queries with intelligent symptom checking, telehealth access, and medical appointment scheduling.",
     problem: "Difficulty in receiving quick, preliminary health consultations and understanding laboratory metrics.",
     role: "Web & AI Developer",
     key_features: [
       "AI-driven preliminary health insights and symptom screening.",
       "Secure patient report storage and medical history management.",
-      "Doctor appointment scheduling and reminder alerts.",
+      "Doctor appointment scheduling, telehealth booking, and reminder alerts.",
     ],
     tech_stack: ["React", "PHP", "MySQL", "AI Integration"],
-    cover_url: "/projects/taskflow-ai.jpg",
+    cover_url: "/projects/medconnect.png",
     gallery: [
-      { url: "/projects/taskflow-ai.jpg", alt: "HealthAI Patient Dashboard" }
+      { url: "/projects/medconnect.png", alt: "MedConnect HealthAI Platform" }
     ],
     featured: false,
     status: "published",
@@ -629,7 +629,7 @@ export const initialProjects: Project[] = [
     id: "00000000-0000-0000-0007-000000000008",
     title: "Creatorly",
     slug: "creatorly",
-    summary: "Responsive web platform for creators with smooth animations, portfolio showcases, and fast load times.",
+    summary: "Responsive web platform for creators with smooth animations, storefront monetization, and fast load times.",
     category: "Frontend",
     overview: "Creatorly is a modern creator hub allowing digital content creators to present their brand, media kits, and sponsorship links with sleek Framer Motion animations.",
     problem: "Creators need high-converting, lightning-fast landing pages with eye-catching aesthetics.",
@@ -640,9 +640,9 @@ export const initialProjects: Project[] = [
       "Fast bundle size and optimized Google Fonts loading.",
     ],
     tech_stack: ["React", "Vite", "Tailwind CSS", "Framer Motion"],
-    cover_url: "/projects/pdf-wizard.jpg",
+    cover_url: "/projects/creatorly.png",
     gallery: [
-      { url: "/projects/pdf-wizard.jpg", alt: "Creatorly Showcase" }
+      { url: "/projects/creatorly.png", alt: "Creatorly Showcase" }
     ],
     featured: false,
     status: "published",

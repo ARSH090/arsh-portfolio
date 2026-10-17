@@ -156,7 +156,11 @@ function setStorage<T>(key: string, data: T) {
 export const AdminStore = {
   // --- Site Settings ---
   getSettings(): SiteSettings {
-    return getStorage("site_settings", initialSiteSettings)
+    const settings = getStorage("site_settings", initialSiteSettings)
+    if (!settings.photo_url || settings.photo_url === "/placeholder-user.jpg" || settings.photo_url === "/placeholder.jpg") {
+      settings.photo_url = initialSiteSettings.photo_url
+    }
+    return settings
   },
   saveSettings(settings: SiteSettings) {
     setStorage("site_settings", settings)
@@ -175,7 +179,27 @@ export const AdminStore = {
 
   // --- Projects ---
   getProjects(): Project[] {
-    return getStorage("projects", initialProjects)
+    const stored = getStorage("projects", initialProjects)
+    // Intelligent auto-heal: if localStorage retains old placeholder paths, merge with new real assets
+    return stored.map((p) => {
+      const match = initialProjects.find((ip) => ip.id === p.id || ip.slug === p.slug)
+      if (match) {
+        const isStale =
+          !p.cover_url ||
+          p.cover_url === "/placeholder.jpg" ||
+          (p.cover_url === "/projects/taskflow-ai.jpg" && match.cover_url !== "/projects/taskflow-ai.jpg") ||
+          (p.cover_url === "/projects/pdf-wizard.jpg" && match.cover_url !== "/projects/pdf-wizard.jpg")
+
+        if (isStale) {
+          return {
+            ...p,
+            cover_url: match.cover_url,
+            gallery: match.gallery && match.gallery.length > 0 ? match.gallery : p.gallery,
+          }
+        }
+      }
+      return p
+    })
   },
   saveProjects(projects: Project[]) {
     setStorage("projects", projects)
@@ -205,7 +229,16 @@ export const AdminStore = {
 
   // --- Certificates ---
   getCertificates(): Certificate[] {
-    return getStorage("certificates", initialCertificates)
+    const stored = getStorage("certificates", initialCertificates)
+    return stored.map((c) => {
+      const match = initialCertificates.find((ic) => ic.id === c.id || ic.credential_id === c.credential_id)
+      if (match) {
+        if (!c.file_url || c.file_url === "/placeholder.jpg") {
+          return { ...c, file_url: match.file_url }
+        }
+      }
+      return c
+    })
   },
   saveCertificates(certs: Certificate[]) {
     setStorage("certificates", certs)

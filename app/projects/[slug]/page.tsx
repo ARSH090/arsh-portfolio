@@ -129,11 +129,11 @@ export default function ProjectCaseStudyPage({ params }: { params: Promise<{ slu
         </div>
 
         {/* Featured Cover Banner */}
-        <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-slate-900 shadow-2xl mb-12">
+        <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-slate-950/80 shadow-2xl mb-12 flex items-center justify-center p-3 sm:p-6 min-h-[300px]">
           <img
             src={project.cover_url || "/placeholder.jpg"}
             alt={project.title}
-            className="w-full h-auto max-h-[500px] object-cover"
+            className="w-auto h-auto max-h-[520px] max-w-full object-contain rounded-xl shadow-lg"
           />
         </div>
 
@@ -200,27 +200,6 @@ export default function ProjectCaseStudyPage({ params }: { params: Promise<{ slu
             </div>
           </CardContent>
         </Card>
-
-        {/* Gallery Section */}
-        {project.gallery && project.gallery.length > 0 && (
-          <div className="space-y-4 mb-16">
-            <h2 className="text-2xl font-bold text-white">Application Gallery</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {project.gallery.map((img, i) => (
-                <div key={i} className="rounded-xl overflow-hidden border border-white/10 bg-slate-900 group">
-                  <img
-                    src={img.url}
-                    alt={img.alt || project.title}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="p-3 bg-slate-950/80 text-xs text-white/70 border-t border-white/10">
-                    {img.alt || `Screenshot ${i + 1}`}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Previous and Next Project Navigation */}
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">

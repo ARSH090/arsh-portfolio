@@ -101,58 +101,72 @@ export default function CertificatesPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
             >
-              <Card className="bg-white/5 backdrop-blur-md border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300 h-full flex flex-col">
+              <Card className="bg-white/5 backdrop-blur-md border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300 h-full flex flex-col group">
                 <CardContent className="p-0 flex flex-col h-full">
-                  <div className="relative cursor-pointer" onClick={() => setLightboxCert(certificate)}>
+                  <div
+                    className="relative h-56 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-b border-white/10 p-3 flex items-center justify-center cursor-pointer overflow-hidden"
+                    onClick={() => setLightboxCert(certificate)}
+                  >
                     <img
                       src={certificate.file_url || "/placeholder.jpg"}
                       alt={certificate.title}
-                      className="w-full h-48 object-cover"
+                      className="max-h-full max-w-full w-auto h-auto object-contain rounded shadow-lg group-hover:scale-[1.03] transition-transform duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                      <div className="p-4">
-                        <Badge
-                          className={`mb-2 ${
-                            certificate.category === "development"
-                              ? "bg-blue-500/50"
-                              : certificate.category === "programming"
-                                ? "bg-green-500/50"
-                                : "bg-pink-500/50"
-                          }`}
-                        >
-                          {certificate.category.charAt(0).toUpperCase() + certificate.category.slice(1)}
-                        </Badge>
-                        <h3 className="text-lg font-semibold text-white">{certificate.title}</h3>
-                        <p className="text-sm text-white/70">{certificate.issuer}</p>
-                      </div>
+                    <div className="absolute top-3 left-3">
+                      <Badge
+                        className={`text-[11px] shadow-md backdrop-blur-md ${
+                          certificate.category === "development"
+                            ? "bg-blue-500/80 text-white border-blue-400/30"
+                            : certificate.category === "programming"
+                              ? "bg-emerald-500/80 text-white border-emerald-400/30"
+                              : "bg-purple-500/80 text-white border-purple-400/30"
+                        }`}
+                      >
+                        {certificate.category.charAt(0).toUpperCase() + certificate.category.slice(1)}
+                      </Badge>
+                    </div>
+                    <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/70 backdrop-blur-md rounded-full p-1.5 text-white/80 hover:text-white">
+                      <ExternalLink className="w-3.5 h-3.5" />
                     </div>
                   </div>
 
-                  <div className="p-4 flex-grow">
-                    <div className="flex items-center text-sm text-white/60 mb-3">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      <span>{certificate.issue_date}</span>
+                  <div className="p-5 flex-grow space-y-3">
+                    <div>
+                      <h3 className="text-base font-bold text-white line-clamp-2 leading-snug group-hover:text-purple-300 transition-colors">
+                        {certificate.title}
+                      </h3>
+                      <p className="text-xs text-purple-300/90 font-medium mt-1">
+                        {certificate.issuer}
+                      </p>
                     </div>
 
-                    <div className="flex items-center text-sm text-white/60 mb-4 font-mono">
-                      <FileCheck className="w-4 h-4 mr-2" />
-                      <span className="truncate">Credential ID: {certificate.credential_id}</span>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-white/60">
+                      <div className="flex items-center">
+                        <Calendar className="w-3.5 h-3.5 mr-1.5 text-pink-400" />
+                        <span>{certificate.issue_date}</span>
+                      </div>
+                      <div className="flex items-center font-mono">
+                        <FileCheck className="w-3.5 h-3.5 mr-1.5 text-purple-400" />
+                        <span className="truncate max-w-[140px]">ID: {certificate.credential_id}</span>
+                      </div>
                     </div>
 
                     {certificate.description && (
-                      <p className="text-white/70 text-sm mb-4">{certificate.description}</p>
+                      <p className="text-white/70 text-xs line-clamp-2">{certificate.description}</p>
                     )}
 
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-white/70">Skills Gained</h4>
-                      <div className="flex flex-wrap gap-1">
-                        {certificate.skills.map((skill, i) => (
-                          <Badge key={i} variant="outline" className="bg-white/5 text-white/80 border-white/20 text-xs">
-                            {skill}
-                          </Badge>
-                        ))}
+                    {certificate.skills && certificate.skills.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        <h4 className="text-[11px] font-semibold text-white/50 uppercase tracking-wider">Skills Gained</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {certificate.skills.map((skill, i) => (
+                            <Badge key={i} variant="outline" className="bg-white/5 text-white/80 border-white/20 text-xs">
+                              {skill}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   <div className="p-4 border-t border-white/10 flex justify-between">
@@ -160,7 +174,7 @@ export default function CertificatesPage() {
                       onClick={() => setLightboxCert(certificate)}
                       className="text-purple-400 hover:text-purple-300 transition-colors flex items-center text-sm font-medium"
                     >
-                      View
+                      View Full Certificate
                       <ExternalLink className="w-3 h-3 ml-1" />
                     </button>
                     {certificate.credential_url ? (

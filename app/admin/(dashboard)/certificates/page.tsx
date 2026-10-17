@@ -28,6 +28,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import AdminPageHeader from "@/components/admin/admin-page-header"
 import AdminConfirmDialog from "@/components/admin/admin-confirm-dialog"
 import AdminEmptyState from "@/components/admin/admin-empty-state"
+import ImageUploadField from "@/components/admin/image-upload-field"
 import { AdminStore } from "@/lib/admin-store"
 import { type Certificate } from "@/lib/initial-data"
 import { toast } from "sonner"
@@ -192,11 +193,11 @@ export default function AdminCertificatesPage() {
               className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-200 overflow-hidden flex flex-col justify-between"
             >
               <div>
-                <div className="relative h-44 bg-slate-800 border-b border-white/10">
+                <div className="relative h-48 bg-slate-950 p-2.5 border-b border-white/10 flex items-center justify-center overflow-hidden">
                   <img
                     src={cert.file_url || "/placeholder.jpg"}
                     alt={cert.title}
-                    className="w-full h-full object-cover"
+                    className="max-h-full max-w-full w-auto h-auto object-contain rounded shadow"
                   />
                   <div className="absolute top-2 right-2">
                     <Badge className="bg-purple-600/80 text-white text-[10px] backdrop-blur-md">
@@ -340,15 +341,15 @@ export default function AdminCertificatesPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-white/80 text-xs">Certificate Image / PDF File URL</Label>
-                <Input
-                  value={editingCert.file_url}
-                  onChange={(e) => setEditingCert({ ...editingCert, file_url: e.target.value })}
-                  placeholder="/certificates/python-crash-course.jpg"
-                  className="bg-white/5 border-white/10 text-white text-xs"
-                />
-              </div>
+              {/* Certificate Image with Local Device Upload */}
+              <ImageUploadField
+                label="Certificate Image / Badge"
+                value={editingCert.file_url}
+                onChange={(url) => setEditingCert({ ...editingCert, file_url: url })}
+                placeholder="/certificates/python-crash-course.jpg"
+                aspectRatio="video"
+                description="Upload the certificate credential or badge directly from your device."
+              />
 
               {/* Skills gained */}
               <div className="space-y-2 p-3 rounded-xl bg-white/5 border border-white/10">

@@ -32,6 +32,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import AdminPageHeader from "@/components/admin/admin-page-header"
 import AdminConfirmDialog from "@/components/admin/admin-confirm-dialog"
 import AdminEmptyState from "@/components/admin/admin-empty-state"
+import ImageUploadField from "@/components/admin/image-upload-field"
 import { AdminStore } from "@/lib/admin-store"
 import { type Project } from "@/lib/initial-data"
 import { toast } from "sonner"
@@ -252,11 +253,11 @@ export default function AdminProjectsPage() {
             >
               <CardContent className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-start sm:items-center space-x-4">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-white/10">
+                  <div className="w-20 h-16 sm:w-24 sm:h-18 rounded-xl overflow-hidden bg-slate-950 flex-shrink-0 border border-white/10 flex items-center justify-center p-1">
                     <img
                       src={project.cover_url || "/placeholder.jpg"}
                       alt={project.title}
-                      className="w-full h-full object-cover"
+                      className="max-h-full max-w-full w-auto h-auto object-contain rounded"
                     />
                   </div>
 
@@ -560,17 +561,17 @@ export default function AdminProjectsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-white/80 text-xs">Cover Image URL</Label>
-                  <Input
-                    value={editingProject.cover_url}
-                    onChange={(e) => setEditingProject({ ...editingProject, cover_url: e.target.value })}
-                    placeholder="/projects/taskflow-ai.jpg"
-                    className="bg-white/5 border-white/10 text-white"
-                  />
-                </div>
+              {/* Project Cover Image with Local Device Upload */}
+              <ImageUploadField
+                label="Project Cover Image"
+                value={editingProject.cover_url}
+                onChange={(url) => setEditingProject({ ...editingProject, cover_url: url })}
+                placeholder="/projects/taskflow-ai.jpg"
+                aspectRatio="video"
+                description="Upload a cover photo directly from your device or pick from your media library."
+              />
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-white/80 text-xs">Live Demo URL</Label>
                   <Input

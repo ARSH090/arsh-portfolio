@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import AdminPageHeader from "@/components/admin/admin-page-header"
+import ImageUploadField from "@/components/admin/image-upload-field"
 import { AdminStore } from "@/lib/admin-store"
 import { type SiteSettings, initialSiteSettings } from "@/lib/initial-data"
 import { toast } from "sonner"
@@ -98,15 +99,15 @@ export default function AdminProfilePage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-white/80 text-xs">Profile Picture URL</Label>
-                <Input
-                  value={settings.photo_url}
-                  onChange={(e) => setSettings({ ...settings, photo_url: e.target.value })}
-                  className="bg-white/5 border-white/10 text-white text-xs font-mono"
-                />
-              </div>
+            <div className="space-y-4">
+              <ImageUploadField
+                label="Profile Picture (Avatar)"
+                value={settings.photo_url}
+                onChange={(url) => setSettings({ ...settings, photo_url: url })}
+                placeholder="/profile/arsh-profile.jpg"
+                aspectRatio="avatar"
+                description="Upload your personal headshot from your device or media library."
+              />
 
               <div className="space-y-2">
                 <Label className="text-white/80 text-xs">Location</Label>
@@ -203,11 +204,13 @@ export default function AdminProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-white/80 text-xs">Open Graph Image URL</Label>
-                <Input
+                <ImageUploadField
+                  label="Open Graph Image"
                   value={settings.og_image_url}
-                  onChange={(e) => setSettings({ ...settings, og_image_url: e.target.value })}
-                  className="bg-white/5 border-white/10 text-white text-xs font-mono"
+                  onChange={(url) => setSettings({ ...settings, og_image_url: url })}
+                  placeholder="https://.../og-image.jpg"
+                  aspectRatio="video"
+                  description="Social preview image (1200x630px recommended)."
                 />
               </div>
             </div>

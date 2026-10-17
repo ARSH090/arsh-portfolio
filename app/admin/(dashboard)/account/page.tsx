@@ -66,6 +66,11 @@ export default function AdminAccountPage() {
   }
 
   const handleSignOutAll = async () => {
+    try {
+      await fetch("/api/admin/logout", { method: "POST" })
+    } catch (e) {
+      // ignore
+    }
     document.cookie = "arsh_admin_session=; path=/; max-age=0"
     try {
       const { createClient } = await import("@/lib/supabase/client")

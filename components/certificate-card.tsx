@@ -27,21 +27,19 @@ export default function CertificateCard({ certificate, index }: { certificate: C
     >
       <Card className="bg-white/5 backdrop-blur-md border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300 h-full flex flex-col">
         <CardContent className="p-0 flex flex-col h-full">
-          <div className="relative group">
+          <div className="relative h-52 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-b border-white/10 p-3 flex items-center justify-center overflow-hidden group">
             <img
               src={certificate.image || "/placeholder.svg"}
               alt={certificate.title}
-              className="w-full h-48 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+              className="max-h-full max-w-full w-auto h-auto object-contain rounded shadow-md group-hover:scale-105 transition-transform duration-500"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-white">{certificate.title}</h3>
-                <p className="text-sm text-white/70">{certificate.issuer}</p>
-              </div>
-            </div>
           </div>
 
-          <div className="p-4 flex-grow">
+          <div className="p-4 flex-grow space-y-2.5">
+            <div>
+              <h3 className="text-base font-semibold text-white line-clamp-2 leading-snug">{certificate.title}</h3>
+              <p className="text-xs text-purple-300 font-medium mt-0.5">{certificate.issuer}</p>
+            </div>
             <div className="flex items-center text-sm text-white/60 mb-3">
               <Calendar className="w-4 h-4 mr-2" />
               <span>{certificate.date}</span>

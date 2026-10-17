@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import AdminPageHeader from "@/components/admin/admin-page-header"
+import ImageUploadField from "@/components/admin/image-upload-field"
 import { AdminStore } from "@/lib/admin-store"
 import { type SiteSettings, initialSiteSettings } from "@/lib/initial-data"
 import { toast } from "sonner"
@@ -103,15 +104,14 @@ export default function AdminSeoPage() {
               </p>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-white/80 text-xs">Open Graph / Twitter Card Image URL</Label>
-              <Input
-                value={settings.og_image_url}
-                onChange={(e) => setSettings({ ...settings, og_image_url: e.target.value })}
-                placeholder="https://.../og-image.jpg"
-                className="bg-white/5 border-white/10 text-white font-mono text-xs"
-              />
-            </div>
+            <ImageUploadField
+              label="Open Graph / Twitter Card Image"
+              value={settings.og_image_url}
+              onChange={(url) => setSettings({ ...settings, og_image_url: url })}
+              placeholder="https://.../og-image.jpg"
+              aspectRatio="video"
+              description="Social preview thumbnail when your portfolio link is shared on Twitter, LinkedIn, and Discord."
+            />
 
             {/* Google Search Result Preview */}
             <div className="p-4 rounded-xl bg-slate-900/80 border border-white/10 space-y-1">

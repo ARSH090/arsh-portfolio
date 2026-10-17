@@ -55,7 +55,11 @@ export default function AdminSidebar() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const handleSignOut = async () => {
-    // Delete dev cookie and signOut
+    try {
+      await fetch("/api/admin/logout", { method: "POST" })
+    } catch (e) {
+      // ignore
+    }
     document.cookie = "arsh_admin_session=; path=/; max-age=0"
     try {
       const { createClient } = await import("@/lib/supabase/client")

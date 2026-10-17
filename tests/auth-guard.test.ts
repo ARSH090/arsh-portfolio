@@ -1,29 +1,42 @@
 /**
  * Unit & Integration Test: Admin Route Guard & Auth Security
  * Verifies that unauthenticated or non-admin users cannot bypass /admin guard
+ * and that only valid admin credentials (email & Masso@12145 password) grant access.
  */
 
 export function testAuthGuard() {
   console.log("▶ Testing Auth Guard & Access Permissions...")
 
-  // 1. Anon / empty user check
-  const anonUser = null
   const adminEmail = "arshh12145@gmail.com"
+  const adminPassword = "Masso@12145"
 
   function isAuthorized(user: { email: string } | null, devCookie?: string): boolean {
-    if (devCookie === "authorized") return true
+    // Insecure bypass cookie "authorized" is explicitly rejected
+    if (devCookie === "authorized") return false
     if (!user || !user.email) return false
     return user.email.toLowerCase() === adminEmail.toLowerCase()
   }
 
+  function verifyCredentials(email: string, pass: string): boolean {
+    if (!email || !pass) return false
+    return email.toLowerCase() === adminEmail.toLowerCase() && pass === adminPassword
+  }
+
   // Assertion 1: Anon user is denied
-  if (isAuthorized(anonUser) === false) {
+  if (isAuthorized(null) === false) {
     console.log("  ✓ Anonymous request without session is rejected")
   } else {
     throw new Error("Assertion failed: Anon user should be rejected")
   }
 
-  // Assertion 2: Random email user is denied
+  // Assertion 2: Plain "authorized" cookie bypass is strictly rejected
+  if (isAuthorized(null, "authorized") === false) {
+    console.log("  ✓ Insecure bypass cookie ('authorized') is strictly rejected")
+  } else {
+    throw new Error("Assertion failed: Plain bypass cookie must be rejected")
+  }
+
+  // Assertion 3: Random email user is denied
   const intruderUser = { email: "intruder@hack.com" }
   if (isAuthorized(intruderUser) === false) {
     console.log("  ✓ Non-admin authenticated user is denied access")
@@ -31,7 +44,7 @@ export function testAuthGuard() {
     throw new Error("Assertion failed: Non-admin user should be rejected")
   }
 
-  // Assertion 3: Admin email is authorized
+  // Assertion 4: Admin email is authorized
   const legitimateAdmin = { email: "arshh12145@gmail.com" }
   if (isAuthorized(legitimateAdmin) === true) {
     console.log("  ✓ Admin email (arshh12145@gmail.com) is correctly authorized")
@@ -39,7 +52,21 @@ export function testAuthGuard() {
     throw new Error("Assertion failed: Admin should be authorized")
   }
 
-  // Assertion 4: Case insensitive email match
+  // Assertion 5: Password verification with Masso@12145
+  if (verifyCredentials("arshh12145@gmail.com", "Masso@12145") === true) {
+    console.log("  ✓ Valid admin credentials (arshh12145@gmail.com + Masso@12145) succeed")
+  } else {
+    throw new Error("Assertion failed: Correct admin credentials should authenticate")
+  }
+
+  // Assertion 6: Wrong password fails
+  if (verifyCredentials("arshh12145@gmail.com", "WrongPassword123") === false) {
+    console.log("  ✓ Incorrect password fails authentication")
+  } else {
+    throw new Error("Assertion failed: Incorrect password should fail")
+  }
+
+  // Assertion 7: Case insensitive email match
   const upperAdmin = { email: "ARSHH12145@GMAIL.COM" }
   if (isAuthorized(upperAdmin) === true) {
     console.log("  ✓ Case-insensitive admin email check passes")

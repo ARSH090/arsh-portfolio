@@ -62,22 +62,21 @@ export default function CertificateSlider({ certificates }: { certificates: Cert
             <Card className="bg-white/5 backdrop-blur-md border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300">
               <CardContent className="p-0">
                 <div className="grid md:grid-cols-2 gap-0">
-                  <div className="relative group">
+                  <div className="relative group bg-slate-950/80 p-4 flex items-center justify-center min-h-[260px] md:min-h-[320px] border-b md:border-b-0 md:border-r border-white/10">
                     <img
                       src={certificates[currentIndex].image || "/placeholder.svg"}
                       alt={certificates[currentIndex].title}
-                      className="w-full h-64 md:h-80 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      className="max-h-[280px] w-auto max-w-full object-contain rounded-lg shadow-xl group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                      <div className="p-6">
-                        <h3 className="text-xl font-semibold text-white mb-2">{certificates[currentIndex].title}</h3>
-                        <p className="text-sm text-white/70">{certificates[currentIndex].issuer}</p>
-                      </div>
-                    </div>
                   </div>
 
                   <div className="p-6 flex flex-col justify-between">
                     <div>
+                      <div className="mb-4">
+                        <h3 className="text-xl font-bold text-white mb-1">{certificates[currentIndex].title}</h3>
+                        <p className="text-sm text-purple-300 font-medium">{certificates[currentIndex].issuer}</p>
+                      </div>
+
                       <div className="flex items-center text-sm text-white/60 mb-3">
                         <Calendar className="w-4 h-4 mr-2" />
                         <span>{certificates[currentIndex].date}</span>

@@ -29,11 +29,16 @@ import {
   Trophy,
   CheckCircle2,
   ExternalLink,
+  Globe,
+  Share2,
+  Twitter,
+  Youtube,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import ParticleBackground from "@/components/particle-background"
 import ProjectCard from "@/components/project-card"
 import CertificateSlider from "@/components/certificate-slider"
+import SkillsCloud, { type SkillCategoryData } from "@/components/skills-cloud"
 import Link from "next/link"
 import {
   initialSiteSettings,
@@ -43,18 +48,19 @@ import {
   initialExperiences,
   initialEducation,
   initialAchievements,
-  initialTestimonials,
   initialResumes,
+  initialSocialLinks,
   type Project,
   type Certificate,
   type SiteSettings,
   type Experience,
   type Education,
   type Achievement,
-  type Testimonial,
   type Resume,
+  type SocialLink,
 } from "@/lib/initial-data"
 import { AdminStore } from "@/lib/admin-store"
+import { getSocialIconConfig } from "@/lib/social-icons"
 import { toast } from "sonner"
 
 export default function Portfolio() {
@@ -71,11 +77,9 @@ export default function Portfolio() {
   const [experiences, setExperiences] = useState<Experience[]>(initialExperiences)
   const [educationList, setEducationList] = useState<Education[]>(initialEducation)
   const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements)
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials)
   const [activeResume, setActiveResume] = useState<Resume>(initialResumes[0])
-  const [allSkills, setAllSkills] = useState<string[]>([
-    "HTML", "CSS", "JavaScript", "React", "Python", "Node.js", "Next.js", "Tailwind CSS", "Git", "MongoDB", "Express.js"
-  ])
+  const [skillCategories, setSkillCategories] = useState<SkillCategoryData[]>(initialSkillCategories)
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>(initialSocialLinks)
 
   // Contact form state
   const [contactName, setContactName] = useState("")
@@ -97,10 +101,15 @@ export default function Portfolio() {
       setAchievements(AdminStore.getAchievements().filter((a) => a.status === "published"))
       setActiveResume(AdminStore.getActiveResume())
 
-      // Flatten unique skills from categories
+      const loadedSocials = AdminStore.getSocialLinks()
+      if (Array.isArray(loadedSocials)) {
+        setSocialLinks([...loadedSocials].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)))
+      }
+
       const cats = AdminStore.getSkillCategories()
-      const flat = Array.from(new Set(cats.flatMap((c) => c.skills)))
-      if (flat.length > 0) setAllSkills(flat)
+      if (cats && cats.length > 0) {
+        setSkillCategories(cats)
+      }
     }
   }
 
@@ -131,7 +140,6 @@ export default function Portfolio() {
         "skills",
         "certificates",
         "education",
-        "feedback",
         "contact",
       ]
       const scrollPosition = window.scrollY + 100
@@ -380,16 +388,6 @@ export default function Portfolio() {
                         {item.label}
                       </motion.button>
                     ))}
-
-                    <Link href="/admin">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-purple-400/50 text-purple-300 hover:bg-purple-600/20 text-xs px-2.5 h-7 rounded-full"
-                      >
-                        Admin CMS
-                      </Button>
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -454,43 +452,27 @@ export default function Portfolio() {
                       </motion.div>
                     </div>
 
-                    <div className="flex space-x-6 mb-6 justify-center sm:justify-start">
-                      <motion.a
-                        whileHover={{ scale: 1.2, rotate: 5 }}
-                        href="https://www.instagram.com/look_itz_arshu?igsh=Z3oxd205M2RtdDFw"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-white/60 hover:text-pink-400 transition-all duration-300"
-                      >
-                        <Instagram className="w-6 h-6" />
-                      </motion.a>
-                      <motion.a
-                        whileHover={{ scale: 1.2, rotate: -5 }}
-                        href="https://wa.me/919608846764"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-white/60 hover:text-green-400 transition-all duration-300"
-                      >
-                        <MessageCircle className="w-6 h-6" />
-                      </motion.a>
-                      <motion.a
-                        whileHover={{ scale: 1.2, rotate: 5 }}
-                        href="https://github.com/arsh090"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-white/60 hover:text-white transition-all duration-300"
-                      >
-                        <Github className="w-6 h-6" />
-                      </motion.a>
-                      <motion.a
-                        whileHover={{ scale: 1.2, rotate: -5 }}
-                        href="https://linkedin.com/in/md-arsh-eqbal"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-white/60 hover:text-blue-400 transition-all duration-300"
-                      >
-                        <Linkedin className="w-6 h-6" />
-                      </motion.a>
+                    <div className="flex flex-wrap items-center gap-5 mb-6 justify-center sm:justify-start">
+                      {socialLinks
+                        .filter((s) => s.visible !== false)
+                        .map((social, idx) => {
+                          const { Icon, hoverColor } = getSocialIconConfig(social.platform, social.icon)
+                          return (
+                            <motion.a
+                              key={social.id || `${social.platform}-${idx}`}
+                              whileHover={{ scale: 1.25, rotate: idx % 2 === 0 ? 6 : -6 }}
+                              whileTap={{ scale: 0.92 }}
+                              href={social.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`text-white/60 ${hoverColor} transition-all duration-300 flex items-center justify-center p-1`}
+                              title={social.label || social.platform}
+                              aria-label={social.platform}
+                            >
+                              <Icon className="w-6 h-6" />
+                            </motion.a>
+                          )
+                        })}
                     </div>
 
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-white/70 text-sm">
@@ -523,7 +505,7 @@ export default function Portfolio() {
                         <img
                           src={settings.photo_url || "/profile/arsh-profile.jpg"}
                           alt={settings.name}
-                          className="w-full h-full object-cover object-center"
+                          className="w-full h-full object-cover object-[center_20%]"
                         />
                       </div>
                       <div className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full p-2 sm:p-3 border-4 border-slate-900 shadow-xl">
@@ -537,7 +519,7 @@ export default function Portfolio() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.5, duration: 0.8 }}
-                  className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto"
+                  className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 max-w-3xl mx-auto"
                 >
                   <Card className="bg-white/5 backdrop-blur-md border-white/10">
                     <CardContent className="p-3 md:p-4 text-center">
@@ -555,12 +537,6 @@ export default function Portfolio() {
                     <CardContent className="p-3 md:p-4 text-center">
                       <h3 className="text-2xl md:text-3xl font-bold text-purple-400">{certificates.length}+</h3>
                       <p className="text-white/70 text-sm md:text-base">Certificates</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="bg-white/5 backdrop-blur-md border-white/10">
-                    <CardContent className="p-3 md:p-4 text-center">
-                      <h3 className="text-2xl md:text-3xl font-bold text-pink-400">SIH</h3>
-                      <p className="text-white/70 text-sm md:text-base">1st Position</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -840,7 +816,7 @@ export default function Portfolio() {
                   transition={{ duration: 0.8 }}
                   className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
                 >
-                  Skills & Technologies
+                  Skills & Technology Clouds
                 </motion.h2>
 
                 <motion.p
@@ -848,29 +824,12 @@ export default function Portfolio() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-center text-white/70 mb-16 max-w-2xl mx-auto"
+                  className="text-center text-white/70 mb-12 max-w-2xl mx-auto text-sm sm:text-base"
                 >
-                  I work with enterprise full-stack frameworks, modern databases, cloud DevOps, and AI inference engines.
+                  Explore categorized technical clouds spanning Frontend, Backend, Cloud & DevOps, AI Automation, Databases, and Core Languages.
                 </motion.p>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {allSkills.map((skill, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.03, duration: 0.5 }}
-                      whileHover={{ scale: 1.05, rotate: 1 }}
-                    >
-                      <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-gradient-to-br hover:from-purple-600/20 hover:to-pink-600/20 transition-all duration-300 cursor-pointer">
-                        <CardContent className="p-4 text-center">
-                          <p className="text-white font-medium text-sm sm:text-base">{skill}</p>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
+                <SkillsCloud categories={skillCategories} />
               </div>
             </section>
 
@@ -969,61 +928,6 @@ export default function Portfolio() {
               </div>
             </section>
 
-            {/* Testimonials Section */}
-            <section className="py-20 px-4 bg-black/10">
-              <div className="max-w-6xl mx-auto">
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8 }}
-                  className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-                >
-                  What People Say
-                </motion.h2>
-
-                <p className="text-center text-white/70 mb-16 max-w-2xl mx-auto">
-                  Feedback from clients and collaborators I've worked with.
-                </p>
-
-                <div className="grid md:grid-cols-2 gap-8">
-                  {testimonials.map((testimonial, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 50 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.2, duration: 0.8 }}
-                    >
-                      <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300">
-                        <CardContent className="p-6">
-                          <div className="flex items-center mb-4">
-                            <div className="w-12 h-12 rounded-full overflow-hidden mr-4 bg-slate-800">
-                              <img
-                                src={testimonial.avatar || "/placeholder.svg"}
-                                alt={testimonial.name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-semibold text-white">{testimonial.name}</h3>
-                              <p className="text-sm text-white/60">{testimonial.role}</p>
-                            </div>
-                          </div>
-                          <div className="flex mb-4">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            ))}
-                          </div>
-                          <p className="text-white/80 italic">"{testimonial.text}"</p>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
             {/* Interactive Contact Form Section */}
             <section id="contact" className="py-20 px-4 bg-black/20">
               <div className="max-w-4xl mx-auto">
@@ -1055,15 +959,32 @@ export default function Portfolio() {
                       </a>
                     </Card>
 
-                    <Card className="bg-white/5 backdrop-blur-md border-white/10 p-5">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <MessageCircle className="w-5 h-5 text-green-400" />
-                        <h4 className="font-semibold text-white text-sm">WhatsApp</h4>
-                      </div>
-                      <a href="https://wa.me/919608846764" target="_blank" rel="noopener noreferrer" className="text-xs text-green-300 hover:underline">
-                        +91 9608846764
-                      </a>
-                    </Card>
+                    {(() => {
+                      const whatsappSocial = socialLinks.find(
+                        (s) =>
+                          s.visible !== false &&
+                          ((s.platform && s.platform.toLowerCase().includes("whatsapp")) ||
+                            (s.icon && s.icon.toLowerCase().includes("whatsapp")) ||
+                            (s.url && s.url.includes("wa.me")))
+                      )
+                      if (!whatsappSocial) return null
+                      return (
+                        <Card className="bg-white/5 backdrop-blur-md border-white/10 p-5">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <MessageCircle className="w-5 h-5 text-green-400" />
+                            <h4 className="font-semibold text-white text-sm">WhatsApp</h4>
+                          </div>
+                          <a
+                            href={whatsappSocial.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-green-300 hover:underline truncate block"
+                          >
+                            {whatsappSocial.label || "+91 9608846764"}
+                          </a>
+                        </Card>
+                      )
+                    })()}
 
                     <Card className="bg-white/5 backdrop-blur-md border-white/10 p-5">
                       <div className="flex items-center space-x-3 mb-2">
@@ -1072,6 +993,34 @@ export default function Portfolio() {
                       </div>
                       <p className="text-xs text-white/70">{settings.location}</p>
                     </Card>
+
+                    {socialLinks.filter((s) => s.visible !== false).length > 0 && (
+                      <Card className="bg-white/5 backdrop-blur-md border-white/10 p-5">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <Share2 className="w-5 h-5 text-purple-400" />
+                          <h4 className="font-semibold text-white text-sm">Connect Directly</h4>
+                        </div>
+                        <div className="flex flex-wrap gap-2.5">
+                          {socialLinks
+                            .filter((s) => s.visible !== false)
+                            .map((social) => {
+                              const { Icon, hoverColor } = getSocialIconConfig(social.platform, social.icon)
+                              return (
+                                <a
+                                  key={social.id}
+                                  href={social.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title={social.label || social.platform}
+                                  className={`p-2.5 rounded-lg bg-white/5 border border-white/10 text-white/70 ${hoverColor} hover:bg-white/10 hover:border-purple-500/40 transition-all flex items-center justify-center`}
+                                >
+                                  <Icon className="w-4 h-4" />
+                                </a>
+                              )
+                            })}
+                        </div>
+                      </Card>
+                    )}
                   </div>
 
                   {/* Right 2 Columns: Validated Contact Form */}
@@ -1180,8 +1129,28 @@ export default function Portfolio() {
 
             {/* Footer */}
             <footer className="py-8 px-4 border-t border-white/10">
-              <div className="max-w-6xl mx-auto text-center">
-                <p className="text-white/60">{settings.footer_text}</p>
+              <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <p className="text-white/60 text-sm">{settings.footer_text}</p>
+                <div className="flex items-center space-x-3">
+                  {socialLinks
+                    .filter((s) => s.visible !== false)
+                    .map((social) => {
+                      const { Icon, hoverColor } = getSocialIconConfig(social.platform, social.icon)
+                      return (
+                        <a
+                          key={social.id}
+                          href={social.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`text-white/50 ${hoverColor} transition-colors p-1.5`}
+                          aria-label={social.platform}
+                          title={social.label || social.platform}
+                        >
+                          <Icon className="w-4 h-4" />
+                        </a>
+                      )
+                    })}
+                </div>
               </div>
             </footer>
           </motion.div>

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Lock, Mail, KeyRound, Sparkles, AlertCircle, Shield, ArrowRight } from "lucide-react"
+import { Lock, Mail, KeyRound, AlertCircle, Shield, ArrowRight } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,65 +24,66 @@ export default function AdminLoginPage() {
     e.preventDefault()
     setError(null)
 
+    if (!email || !password) {
+      setError("Please enter both email and password.")
+      return
+    }
+
     // Rate limiting check: 5 attempts
     if (attempts >= 5) {
-      setError("Too many login attempts. Please wait 15 minutes before trying again.")
+      setError("Too many failed login attempts. Please wait 15 minutes before trying again.")
       return
     }
 
     setLoading(true)
 
     try {
-      const { createClient } = await import("@/lib/supabase/client")
-      const supabase = createClient()
-
-      if (!supabase) {
-        // Dev fallback mode: set session cookie and allow local preview
-        document.cookie = "arsh_admin_session=authorized; path=/; max-age=86400"
-        router.push("/admin")
-        return
-      }
-
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      // 1. Authenticate with server API endpoint
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       })
 
-      if (authError) {
+      const data = await response.json()
+
+      if (!response.ok) {
         setAttempts((prev) => prev + 1)
-        setError(authError.message)
+        setError(data.error || "Invalid admin email or password.")
         setLoading(false)
         return
       }
 
-      // Check if 2FA TOTP is required or configured
-      if (showTotp && totpCode) {
-        // Verify TOTP if multi-factor is enabled
-        const { error: mfaError } = await supabase.auth.mfa.verify({
-          factorId: "totp",
-          challengeId: "",
-          code: totpCode,
-        })
-        if (mfaError) {
-          setError("Invalid 2FA Authenticator code.")
-          setLoading(false)
-          return
+      // 2. Also authenticate Supabase browser client if configured
+      try {
+        const { createClient } = await import("@/lib/supabase/client")
+        const supabase = createClient()
+        if (supabase) {
+          await supabase.auth.signInWithPassword({
+            email,
+            password,
+          })
+
+          if (showTotp && totpCode) {
+            await supabase.auth.mfa.verify({
+              factorId: "totp",
+              challengeId: "",
+              code: totpCode,
+            })
+          }
         }
+      } catch (sbErr) {
+        // Server session is already authenticated via httpOnly cookie
       }
 
-      // Set auth session
-      document.cookie = "arsh_admin_session=authorized; path=/; max-age=86400"
+      // 3. Navigate directly to dashboard
       router.push("/admin")
+      router.refresh()
     } catch (err: any) {
-      setError(err?.message || "An unexpected error occurred.")
+      setError(err?.message || "An unexpected error occurred during authentication.")
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleDevBypass = () => {
-    document.cookie = "arsh_admin_session=authorized; path=/; max-age=86400"
-    router.push("/admin")
   }
 
   return (
@@ -106,7 +107,7 @@ export default function AdminLoginPage() {
                 Portfolio CMS Admin
               </h1>
               <p className="text-sm text-white/60 mt-1">
-                Enter your credentials to manage your portfolio content
+                Enter your admin credentials to access the management portal
               </p>
             </div>
 
@@ -183,21 +184,6 @@ export default function AdminLoginPage() {
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </form>
-
-            <div className="mt-6 pt-6 border-t border-white/10 text-center">
-              <p className="text-xs text-white/50 mb-3">
-                Quick Evaluation Mode (Bypasses remote auth if offline)
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDevBypass}
-                className="w-full border-white/10 text-white/70 hover:text-white hover:bg-white/5 text-xs"
-              >
-                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-yellow-400" />
-                Enter Admin Panel (Dev / Offline Mode)
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </motion.div>

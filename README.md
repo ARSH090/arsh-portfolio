@@ -90,15 +90,15 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 
 # Admin Authorization
-ADMIN_EMAIL=arshh12145@gmail.com
-NEXT_PUBLIC_SITE_URL=https://arsh-port.netlify.app
+ADMIN_EMAIL=admin@example.com
+NEXT_PUBLIC_SITE_URL=https://example.com
 
 # Optional: Cloudflare Turnstile Anti-Spam
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=your-turnstile-site-key
-TURNSTILE_SECRET_KEY=your-turnstile-secret-key
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=
 
 # Optional: Email Notifications (Resend)
-RESEND_API_KEY=re_your_api_key
+RESEND_API_KEY=
 ```
 
 ---

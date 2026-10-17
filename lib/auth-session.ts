@@ -5,17 +5,21 @@
 
 export const ADMIN_SESSION_COOKIE = "arsh_admin_session"
 
+export function getAdminEmail(): string {
+  return (process.env.ADMIN_EMAIL || "").trim().toLowerCase()
+}
+
 export function getAdminCredentials() {
-  const email = (process.env.ADMIN_EMAIL || "arshh12145@gmail.com").trim().toLowerCase()
-  const password = process.env.ADMIN_PASSWORD || "Masso@12145"
+  const email = getAdminEmail()
+  const password = process.env.ADMIN_PASSWORD || ""
   return { email, password }
 }
 
 function getSessionSecret(): string {
   return (
     process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.ADMIN_PASSWORD ||
-    "Masso@12145-secure-session-secret"
+    process.env.ADMIN_SESSION_SECRET ||
+    "arsh-portfolio-session-crypto-token-salt"
   )
 }
 
@@ -71,8 +75,8 @@ export async function verifySessionToken(token?: string | null): Promise<{ valid
       return { valid: false } // Expired or malformed
     }
 
-    const { email: adminEmail } = getAdminCredentials()
-    if (email.toLowerCase() !== adminEmail) {
+    const adminEmail = getAdminEmail()
+    if (!adminEmail || email.toLowerCase() !== adminEmail) {
       return { valid: false } // Must match admin email
     }
 

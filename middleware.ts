@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { createServerClient } from "@supabase/ssr"
-import { verifySessionToken, ADMIN_SESSION_COOKIE, getAdminCredentials } from "./lib/auth-session"
+import { verifySessionToken, ADMIN_SESSION_COOKIE, getAdminEmail } from "./lib/auth-session"
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const { email: adminEmail } = getAdminCredentials()
+  const adminEmail = getAdminEmail()
 
   const isLoginPage = pathname === "/admin/login"
   const isAdminRoute = pathname.startsWith("/admin")

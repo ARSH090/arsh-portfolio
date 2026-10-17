@@ -15,7 +15,12 @@ for (const line of envFile.split("\n")) {
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const adminEmail = process.env.ADMIN_EMAIL || "arshh12145@gmail.com"
-const adminPassword = "Masso@12145"
+const adminPassword = process.env.ADMIN_PASSWORD
+
+if (!adminPassword) {
+  console.error("ADMIN_PASSWORD must be configured in environment variables.")
+  process.exit(1)
+}
 
 const supabase = createClient(url, key)
 

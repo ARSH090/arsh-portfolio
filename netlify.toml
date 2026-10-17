@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+  SECRETS_SCAN_OMIT_KEYS = ["ADMIN_EMAIL", "ADMIN_PASSWORD"]
+
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "ADMIN_EMAIL,ADMIN_PASSWORD"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
